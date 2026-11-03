@@ -48,7 +48,7 @@ require __DIR__ . '/../includes/admin_header.php';
         <form class="card card-body" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?php echo $edit ? (int) $edit['id'] : 0; ?>">
-            <div class="form-row"><label>Name</label><input name="name" required value="<?php echo $edit ? e($edit['name']) : ''; ?>"></div>
+            <div class="form-row"><label>Name</label><input name="name" minlength="2" maxlength="100" pattern="[a-zA-Z\s\.\-']{2,100}" title="Character name must contain letters and spaces." required value="<?php echo $edit ? e($edit['name']) : ''; ?>"></div>
             <div class="form-row">
                 <label>Category</label>
                 <select name="category_id">
@@ -59,7 +59,7 @@ require __DIR__ . '/../includes/admin_header.php';
             </div>
             <div class="form-row"><label>Role type</label><input name="role_type" value="<?php echo $edit ? e($edit['role_type']) : ''; ?>"></div>
             <div class="form-row"><label>Bio</label><textarea name="bio" rows="5"><?php echo $edit ? e($edit['bio']) : ''; ?></textarea></div>
-            <div class="form-row"><label>Image URL</label><input name="image" value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
+            <div class="form-row"><label>Image URL</label><input name="image" pattern="https?:\/\/.+" title="Image URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
             <div class="form-row"><label>Or upload image</label><input type="file" name="image_file" accept="image/*"></div>
             <div class="form-row"><label>Attributes</label><input name="attributes" value="<?php echo $edit ? e($edit['attributes']) : ''; ?>"></div>
             <div class="form-row"><label>Timeline</label><input name="timeline" value="<?php echo $edit ? e($edit['timeline']) : ''; ?>"></div>

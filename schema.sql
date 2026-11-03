@@ -326,3 +326,32 @@ INSERT INTO personal_notes (user_id, title, body, created_at) VALUES
 
 INSERT INTO feedback (user_id, type, message, status, created_at) VALUES
 (2, 'site', 'Love the category cards. Please add more K-Pop recaps.', 'open', NOW());
+
+CREATE TABLE IF NOT EXISTS merch_orders (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  order_number VARCHAR(60) NOT NULL UNIQUE,
+  total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  payment_method VARCHAR(60) NOT NULL DEFAULT 'Cash on Delivery',
+  status ENUM('pending','successful','cancelled') NOT NULL DEFAULT 'pending',
+  shipping_name VARCHAR(120) NOT NULL,
+  shipping_phone VARCHAR(40) NOT NULL,
+  shipping_address TEXT NOT NULL,
+  shipping_city VARCHAR(80) NOT NULL,
+  order_notes TEXT,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  INDEX idx_mo_user (user_id),
+  INDEX idx_mo_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS merch_order_items (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id INT UNSIGNED NOT NULL,
+  merch_id INT UNSIGNED NOT NULL,
+  title VARCHAR(180) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  quantity INT UNSIGNED NOT NULL DEFAULT 1,
+  image VARCHAR(255) DEFAULT '',
+  INDEX idx_moi_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

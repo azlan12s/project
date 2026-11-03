@@ -85,11 +85,11 @@ require __DIR__ . '/includes/header.php';
             <div class="article-meta-grid">
                 <div class="form-row article-field-wide">
                     <label for="article-title">Article title</label>
-                    <input id="article-title" name="title" maxlength="200" placeholder="Give your story a clear, memorable title" value="<?php echo e($form['title']); ?>" required>
+                    <input id="article-title" name="title" maxlength="200" minlength="3" pattern=".{3,200}" placeholder="Give your story a clear, memorable title (min 3 chars)" value="<?php echo e($form['title']); ?>" title="Article title must be between 3 and 200 characters." required>
                 </div>
                 <div class="form-row">
                     <label for="article-category">Fandom</label>
-                    <select id="article-category" name="category_id" required>
+                    <select id="article-category" name="category_id" title="Please choose a fandom category." required>
                         <option value="">Choose a fandom</option>
                         <?php foreach ($cats as $c) { ?><option value="<?php echo (int) $c['id']; ?>" <?php echo (int) $form['category_id'] === (int) $c['id'] ? 'selected' : ''; ?>><?php echo e($c['name']); ?></option><?php } ?>
                     </select>
@@ -100,7 +100,7 @@ require __DIR__ . '/includes/header.php';
                 </div>
                 <div class="form-row">
                     <label for="article-year">Release year <span class="article-optional">Optional</span></label>
-                    <input id="article-year" name="release_year" type="number" min="1900" max="<?php echo (int) date('Y') + 5; ?>" value="<?php echo e($form['release_year']); ?>">
+                    <input id="article-year" name="release_year" type="number" min="1900" max="<?php echo (int) date('Y') + 5; ?>" pattern="(19\d\d|20\d\d)" placeholder="e.g. 2024" title="Release year must be a valid 4-digit year." value="<?php echo e($form['release_year']); ?>">
                 </div>
                 <div class="form-row">
                     <label for="article-thumbnail">Cover image <span class="article-optional">Optional</span></label>
@@ -109,7 +109,7 @@ require __DIR__ . '/includes/header.php';
                 </div>
                 <div class="form-row article-field-wide">
                     <label for="article-body">Your article</label>
-                    <textarea id="article-body" name="body" rows="10" placeholder="Start with the idea you cannot stop thinking about..." required><?php echo e($form['body']); ?></textarea>
+                    <textarea id="article-body" name="body" rows="10" minlength="20" placeholder="Start with the idea you cannot stop thinking about (at least 20 characters)..." title="Article body must be at least 20 characters long." required><?php echo e($form['body']); ?></textarea>
                 </div>
             </div>
             <div class="article-form-footer">

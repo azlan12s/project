@@ -17,6 +17,7 @@ $counts = array(
     'poll_votes'   => db_one("SELECT COUNT(*) AS c FROM fandom_poll_votes"),
     'quiz_runs'    => db_one("SELECT COUNT(*) AS c FROM quiz_attempts"),
     'event_rsvps'  => db_one("SELECT COUNT(*) AS c FROM event_rsvps"),
+    'orders'       => db_one("SELECT COUNT(*) AS c FROM merch_orders"),
 );
 
 $by_cat = db_all("SELECT categories.name, COUNT(contents.id) AS total, COALESCE(SUM(contents.views), 0) AS total_views FROM categories LEFT JOIN contents ON contents.category_id = categories.id AND contents.status = 'published' GROUP BY categories.id, categories.name ORDER BY total DESC");
@@ -65,6 +66,7 @@ require __DIR__ . '/../includes/admin_header.php';
     <div class="stat card card-body"><b><?php echo (int) $counts['poll_votes']['c']; ?></b> Poll votes</div>
     <div class="stat card card-body"><b><?php echo (int) $counts['quiz_runs']['c']; ?></b> Quiz attempts</div>
     <div class="stat card card-body"><b><?php echo (int) $counts['event_rsvps']['c']; ?></b> Event RSVPs</div>
+    <div class="stat card card-body"><b><?php echo (int) $counts['orders']['c']; ?></b> Merch orders</div>
 </div>
 <div class="card card-body" style="margin-top:20px">
     <h3 style="margin-top:0">Content &amp; engagement by category</h3>

@@ -25,17 +25,14 @@ $flash = flash_get();
 $current_page = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'index.php');
 $nav_links = array(
     'index.php' => array(site_url('/index.php'), 'Home'),
+    'merch.php' => array(site_url('/merch.php'), 'Merch'),
     'explore.php' => array(site_url('/explore.php'), 'Explore'),
     'multimedia.php' => array(site_url('/multimedia.php'), 'Multimedia'),
     'characters.php' => array(site_url('/characters.php'), 'Characters'),
     'articles.php' => array(site_url('/articles.php'), 'Articles'),
-    'merch.php' => array(site_url('/merch.php'), 'Merch'),
     'events.php' => array(site_url('/events.php'), 'Events'),
-    'quiz.php' => array(site_url('/quiz.php'), 'Trivia'),
-    'polls.php' => array(site_url('/polls.php'), 'Polls'),
     'feedback.php' => array(site_url('/feedback.php'), 'Feedback'),
     'events-map.php' => array(site_url('/events-map.php'), 'Map'),
-    'dashboard.php' => array(site_url('/dashboard.php'), 'Account'),
 );
 
 /* Each category is a real page at the site root (anime.php, k-pop.php, ...).
@@ -61,7 +58,18 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="<?php echo e(site_url('/assets/css/app.css?v=' . filemtime(__DIR__ . '/../assets/css/app.css'))); ?>">
-    <script>document.documentElement.classList.add('js-motion');</script>
+    <script>
+        document.documentElement.classList.add('js-motion');
+        window.FHP_USER = <?php echo json_encode($user ? array('id' => (int) $user['id'], 'name' => $user['name'], 'email' => $user['email']) : null); ?>;
+        window.FHP_CSRF = <?php echo json_encode(csrf_token()); ?>;
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted || (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0] && window.performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
+                <?php if ($user) { ?>
+                    window.location.reload();
+                <?php } ?>
+            }
+        });
+    </script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -87,31 +95,35 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
                 <a class="nav-link<?php echo $is_active; ?>" href="<?php echo e($link[0]); ?>"<?php echo $is_active === ' active' ? ' aria-current="page"' : ''; ?>>
                     <?php echo e($link[1]); ?>
                 </a>
-            <?php } ?>
-            <div class="nav-drop">
-                <button class="nav-drop-btn" type="button" aria-expanded="false" aria-haspopup="true"<?php echo $on_category_page ? ' aria-current="page"' : ''; ?>>
-                    Categories
-                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="nav-caret"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <div class="nav-drop-menu" role="group" aria-label="Categories">
-                    <?php foreach ($nav_cats as $c) { ?>
-                        <a href="<?php echo e(category_url($c['slug'])); ?>"<?php echo $current_page === $c['slug'] . '.php' ? ' aria-current="page"' : ''; ?>>
-                            <span class="nav-drop-art" style="background-image:url('<?php echo e(category_banner_image($c['slug'])); ?>')" aria-hidden="true"></span>
-                            <span class="nav-drop-text">
-                                <b><?php echo e($c['name']); ?></b>
-                                <small><?php echo e($c['description']); ?></small>
-                            </span>
-                        </a>
-                    <?php } ?>
-                </div>
-            </div>
-            <?php if ($user) { ?>
-                <?php if ($user['role'] === 'admin') { ?>
-                    <a class="nav-link" href="<?php echo e(site_url('/admin/index.php')); ?>">Admin</a>
+                <?php if ($key === 'index.php') { ?>
+                    <div class="nav-drop">
+                        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-haspopup="true"<?php echo $on_category_page ? ' aria-current="page"' : ''; ?>>
+                            Categories
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="nav-caret"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <div class="nav-drop-menu" role="group" aria-label="Categories">
+                            <?php foreach ($nav_cats as $c) { ?>
+                                <a href="<?php echo e(category_url($c['slug'])); ?>"<?php echo $current_page === $c['slug'] . '.php' ? ' aria-current="page"' : ''; ?>>
+                                    <span class="nav-drop-art" style="background-image:url('<?php echo e(category_banner_image($c['slug'])); ?>')" aria-hidden="true"></span>
+                                    <span class="nav-drop-text">
+                                        <b><?php echo e($c['name']); ?></b>
+                                        <small><?php echo e($c['description']); ?></small>
+                                    </span>
+                                </a>
+                            <?php } ?>
+                        </div>
+                    </div>
                 <?php } ?>
-                <a class="nav-link" href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
+            <?php } ?>
+            <?php if ($user) { ?>
+                <a class="nav-link mobile-only-link<?php echo $current_page === 'dashboard.php' ? ' active' : ''; ?>" href="<?php echo e(site_url('/dashboard.php')); ?>"<?php echo $current_page === 'dashboard.php' ? ' aria-current="page"' : ''; ?>>Account</a>
+                <?php if ($user['role'] === 'admin') { ?>
+                    <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/admin/index.php')); ?>">Admin</a>
+                <?php } ?>
+                <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
             <?php } else { ?>
-                <a class="nav-link" href="<?php echo e(site_url('/login.php')); ?>">Login</a>
+                <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/login.php')); ?>">Login</a>
+                <a class="nav-cta mobile-only-link" href="<?php echo e(site_url('/register.php')); ?>">Register</a>
             <?php } ?>
         </nav>
         <div class="header-tools">
@@ -130,7 +142,14 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
                 <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
             </button>
             <?php if (!$user) { ?>
-                <a class="nav-cta" href="<?php echo e(site_url('/register.php')); ?>">Join</a>
+                <a class="nav-login-btn desktop-only-link" href="<?php echo e(site_url('/login.php')); ?>">Login</a>
+                <a class="nav-cta desktop-only-link" href="<?php echo e(site_url('/register.php')); ?>">Register</a>
+            <?php } else { ?>
+                <a class="nav-link desktop-only-link<?php echo $current_page === 'dashboard.php' ? ' active' : ''; ?>" href="<?php echo e(site_url('/dashboard.php')); ?>"<?php echo $current_page === 'dashboard.php' ? ' aria-current="page"' : ''; ?>>Account</a>
+                <?php if ($user['role'] === 'admin') { ?>
+                    <a class="nav-link desktop-only-link" href="<?php echo e(site_url('/admin/index.php')); ?>">Admin</a>
+                <?php } ?>
+                <a class="nav-link desktop-only-link" href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
             <?php } ?>
         </div>
     </div>

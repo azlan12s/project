@@ -24,6 +24,7 @@ $notes = db_all("SELECT * FROM personal_notes WHERE user_id = $uid ORDER BY crea
 $ratings = db_all("SELECT media_ratings.*, contents.title FROM media_ratings JOIN contents ON contents.id = media_ratings.content_id WHERE media_ratings.user_id = $uid ORDER BY media_ratings.created_at DESC LIMIT 8");
 $activity = db_all("SELECT * FROM activity_logs WHERE user_id = $uid ORDER BY created_at DESC LIMIT 8");
 $pending = db_all("SELECT id, title, status FROM contents WHERE user_id = $uid ORDER BY created_at DESC");
+$orders = db_all("SELECT * FROM merch_orders WHERE user_id = $uid ORDER BY created_at DESC");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -50,35 +51,25 @@ require __DIR__ . '/includes/header.php';
         <?php if ($user['avatar'] !== '') { ?><img class="avatar" src="<?php echo e(site_url($user['avatar'])); ?>" alt=""><?php } ?>
         <h3><?php echo e($user['name']); ?></h3>
         <p class="meta"><?php echo e($user['role']); ?> · <span class="chip"><?php echo e($fan_profile['rank']); ?></span></p>
-        <p class="meta"><strong><?php echo (int) $fan_profile['xp']; ?> Fan XP</strong></p>
         <a href="<?php echo e(site_url('/profile.php')); ?>">Profile &amp; preferences</a>
+        <a href="#my-orders">My Merch Orders (<?php echo count($orders); ?>)</a>
         <a href="<?php echo e(site_url('/bookmarks.php')); ?>">Bookmarks drawer</a>
         <a href="<?php echo e(site_url('/submit-article.php')); ?>">Submit article</a>
-        <a href="<?php echo e(site_url('/quiz.php')); ?>">Fandom Trivia &amp; XP Arena</a>
-        <a href="<?php echo e(site_url('/polls.php')); ?>">Community Polls</a>
         <?php if ($user['role'] === 'admin') { ?><a href="<?php echo e(site_url('/admin/index.php')); ?>">Admin panel</a><?php } ?>
         <a href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
     </aside>
     <div>
         <h1><?php echo e($greet); ?>, <?php echo e($user['name']); ?></h1>
-        <p class="lede">Your fandom shortcuts, Fan XP rank, tailored recommendations, saved items, event RSVPs, and notes live here.</p>
+        <p class="lede">Your fandom shortcuts, rank, tailored recommendations, saved items, orders, and notes live here.</p>
 
-        <div class="grid grid-4" style="margin: 18px 0 26px;">
+        <div class="grid grid-2" style="margin: 18px 0 26px;">
             <div class="stat card card-body">
                 <span class="meta">Fan Rank</span>
                 <b><?php echo e($fan_profile['rank']); ?></b>
             </div>
             <div class="stat card card-body">
-                <span class="meta">Total Fan XP</span>
-                <b><?php echo (int) $fan_profile['xp']; ?> XP</b>
-            </div>
-            <div class="stat card card-body">
                 <span class="meta">Saved Bookmarks</span>
                 <b><?php echo (int) $fan_profile['bookmarks_count']; ?></b>
-            </div>
-            <div class="stat card card-body">
-                <span class="meta">Event RSVPs</span>
-                <b><?php echo (int) $fan_profile['rsvps_count']; ?></b>
             </div>
         </div>
 
@@ -89,6 +80,53 @@ require __DIR__ . '/includes/header.php';
             <?php } ?>
             <?php if (!$fav) { ?><span class="meta">Pick favorites in <a href="<?php echo e(site_url('/profile.php')); ?>">Profile</a>.</span><?php } ?>
         </p>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin:28px 0 14px;">
+            <h2 id="my-orders" style="margin:0;">My Merchandise Orders</h2>
+            <a href="<?php echo e(site_url('/merch.php')); ?>" class="btn-ghost" style="font-size:0.82rem; padding:6px 14px;">Explore Store &rarr;</a>
+        </div>
+        <?php if ($orders) { ?>
+            <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:28px;">
+                <?php foreach ($orders as $ord) {
+                    $order_items = db_all("SELECT * FROM merch_order_items WHERE order_id = " . (int) $ord['id']);
+                    $status_cls = 'badge-order-' . $ord['status'];
+                ?>
+                <div class="card card-body" style="border:1px solid var(--line); border-radius:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; border-bottom:1px solid var(--line); padding-bottom:10px; margin-bottom:12px;">
+                        <div>
+                            <strong style="font-size:1.05rem; letter-spacing:0.02em;"><?php echo e($ord['order_number']); ?></strong>
+                            <p class="meta" style="margin:2px 0 0;"><?php echo e($ord['created_at']); ?> &middot; Method: <strong><?php echo e($ord['payment_method']); ?></strong></p>
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="badge <?php echo $status_cls; ?>" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em;"><?php echo e($ord['status']); ?></span>
+                            <p style="margin:4px 0 0; font-weight:800; color:var(--accent-2); font-size:1.15rem;">Total: $<?php echo number_format((float) $ord['total_amount'], 2); ?></p>
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">
+                        <span>Deliver to: <strong><?php echo e($ord['shipping_name']); ?></strong> (<?php echo e($ord['shipping_phone']); ?>)</span> &middot;
+                        <span>Address: <strong><?php echo e($ord['shipping_address']); ?>, <?php echo e($ord['shipping_city']); ?></strong></span>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px;">
+                        <?php foreach ($order_items as $item) { ?>
+                            <div style="display:flex; gap:10px; align-items:center; padding:8px; background:var(--bg-2); border-radius:8px; border:1px solid var(--line);">
+                                <?php if ($item['image']) { ?>
+                                    <div style="width:48px; height:48px; border-radius:6px; background:var(--card) url('<?php echo e($item['image']); ?>') center/cover; flex:0 0 48px;"></div>
+                                <?php } ?>
+                                <div style="min-width:0; flex:1;">
+                                    <h4 style="margin:0 0 2px; font-size:0.86rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo e($item['title']); ?></h4>
+                                    <small class="meta">Qty: <?php echo (int) $item['quantity']; ?> &times; $<?php echo number_format((float) $item['price'], 2); ?></small>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+        <?php } else { ?>
+            <p class="meta" style="margin-bottom:28px;">You haven't placed any merchandise orders yet. Browse our <a href="<?php echo e(site_url('/merch.php')); ?>">Merchandise Store</a> to order with Cash on Delivery!</p>
+        <?php } ?>
 
         <?php if ($recommended) { ?>
         <h2>Recommended for you</h2>

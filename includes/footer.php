@@ -1,4 +1,5 @@
 </main>
+<?php if (empty($hide_footer)) { ?>
 <footer class="site-footer">
     <div class="footer-glow" aria-hidden="true"></div>
 
@@ -32,8 +33,6 @@
                 <li><a href="<?php echo e(site_url('/events-map.php')); ?>">Events Map</a></li>
                 <li><a href="<?php echo e(site_url('/merch.php')); ?>">Merchandise</a></li>
                 <li><a href="<?php echo e(site_url('/articles.php')); ?>">Articles</a></li>
-                <li><a href="<?php echo e(site_url('/quiz.php')); ?>">Fandom Trivia</a></li>
-                <li><a href="<?php echo e(site_url('/polls.php')); ?>">Community Polls</a></li>
                 <li><a href="<?php echo e(site_url('/feedback.php')); ?>">Feedback</a></li>
             </ul>
         </nav>
@@ -64,8 +63,7 @@
             <a href="<?php echo e(site_url('/events.php')); ?>">Events</a>
             <a href="<?php echo e(site_url('/events-map.php')); ?>">Map</a>
             <a href="<?php echo e(site_url('/merch.php')); ?>">Merch</a>
-            <a href="<?php echo e(site_url('/quiz.php')); ?>">Trivia</a>
-            <a href="<?php echo e(site_url('/polls.php')); ?>">Polls</a>
+            <a href="<?php echo e(site_url('/feedback.php')); ?>">Feedback</a>
         </div>
     </div>
 
@@ -74,6 +72,7 @@
         <a class="footer-top" href="#top">Back to top</a>
     </div>
 </footer>
+<?php } ?>
 <button class="to-top" id="toTop" type="button" aria-label="Back to top" title="Back to top">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5.5 21 14l-1.4 1.4-6.6-6.6V21h-2V8.8L5.4 15.4 4 14l8-8.5Z"/></svg>
 </button>
@@ -116,6 +115,41 @@
         <span>AI Chat</span>
     </button>
 </section>
+<?php 
+$current_page_script = basename(parse_url(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '', PHP_URL_PATH));
+$is_merch_page = (!empty($is_merchandise_page) || $current_page_script === 'merch.php' || (isset($active) && $active === 'merch'));
+if ($is_merch_page) { ?>
+<!-- Floating Side Cart Button & Side Cart Drawer (Merch Page Only) -->
+<div class="side-cart-backdrop" id="sideCartBackdrop"></div>
+<aside class="side-cart-drawer" id="sideCartDrawer" aria-hidden="true" role="dialog" aria-label="Shopping Cart">
+    <div class="side-cart-header">
+        <div class="side-cart-title-box">
+            <h3>Fandom Cart</h3>
+            <span class="side-cart-count-badge" id="sideCartDrawerCount">0 items</span>
+        </div>
+        <button type="button" class="side-cart-close" id="sideCartClose" aria-label="Close cart">&times;</button>
+    </div>
+    <div class="side-cart-body" id="sideCartItems">
+        <!-- Rendered by JS -->
+    </div>
+    <div class="side-cart-footer">
+        <div class="side-cart-summary">
+            <div class="cart-summary-row"><span>Subtotal</span><strong id="sideCartSubtotal">$0.00</strong></div>
+            <div class="cart-summary-row"><span>Shipping</span><span class="text-free-ship">FREE</span></div>
+            <div class="cart-summary-row cart-summary-total"><span>Total</span><strong id="sideCartTotal">$0.00</strong></div>
+        </div>
+        <button type="button" class="btn btn-checkout" id="sideCartCheckout">Checkout Now</button>
+        <button type="button" class="btn-ghost side-cart-clear-btn" id="sideCartClear">Clear Cart</button>
+    </div>
+</aside>
+<button class="floating-side-cart" id="floatingSideCart" type="button" aria-label="View Shopping Cart">
+    <span class="side-cart-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12L6 6ZM6 6 4.5 3H2m7 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm9 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
+    </span>
+    <span>Cart</span>
+    <span class="side-cart-badge" id="sideCartCount">0</span>
+</button>
+<?php } ?>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="<?php echo e(site_url('/assets/js/app.js?v=' . filemtime(__DIR__ . '/../assets/js/app.js'))); ?>"></script>
 <?php if (isset($extra_js)) { echo $extra_js; ?>

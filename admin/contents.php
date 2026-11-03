@@ -67,7 +67,7 @@ require __DIR__ . '/../includes/admin_header.php';
             <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?php echo $edit ? (int) $edit['id'] : 0; ?>">
             <h2><?php echo $edit ? 'Edit item' : 'New item'; ?></h2>
-            <div class="form-row"><label>Title</label><input name="title" required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
+            <div class="form-row"><label>Title</label><input name="title" minlength="3" maxlength="200" pattern=".{3,200}" title="Title must be between 3 and 200 characters." required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
             <div class="form-row">
                 <label>Category</label>
                 <select name="category_id">
@@ -86,11 +86,11 @@ require __DIR__ . '/../includes/admin_header.php';
             </div>
             <div class="form-row"><label>Genre</label><input name="genre" value="<?php echo $edit ? e($edit['genre']) : ''; ?>"></div>
             <div class="form-row"><label>Body</label><textarea name="body" rows="6"><?php echo $edit ? e($edit['body']) : ''; ?></textarea></div>
-            <div class="form-row"><label>Media URL (YouTube embed / audio)</label><input name="media_url" value="<?php echo $edit ? e($edit['media_url']) : ''; ?>"></div>
+            <div class="form-row"><label>Media URL (YouTube embed / audio)</label><input name="media_url" pattern="https?:\/\/.+" title="Media URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['media_url']) : ''; ?>"></div>
             <div class="form-row"><label>Or upload a licensed MP4/WebM video (max 25 MB)</label><input type="file" name="video_file" accept="video/mp4,video/webm"></div>
-            <div class="form-row"><label>Thumbnail URL</label><input name="thumbnail" value="<?php echo $edit ? e($edit['thumbnail']) : ''; ?>"></div>
+            <div class="form-row"><label>Thumbnail URL</label><input name="thumbnail" pattern="https?:\/\/.+" title="Thumbnail URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['thumbnail']) : ''; ?>"></div>
             <div class="form-row"><label>Or upload thumbnail</label><input type="file" name="thumb_file" accept="image/*"></div>
-            <div class="form-row"><label>Year</label><input name="release_year" type="number" value="<?php echo $edit ? e($edit['release_year']) : date('Y'); ?>"></div>
+            <div class="form-row"><label>Year</label><input name="release_year" type="number" min="1900" max="2099" pattern="(19\d\d|20\d\d)" title="Year must be a valid 4-digit year." value="<?php echo $edit ? e($edit['release_year']) : date('Y'); ?>"></div>
             <div class="form-row"><label>Popularity score</label><input name="popularity_score" type="number" value="<?php echo $edit ? (int) $edit['popularity_score'] : 50; ?>"></div>
             <div class="form-row">
                 <label>Status</label>

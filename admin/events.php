@@ -45,7 +45,7 @@ require __DIR__ . '/../includes/admin_header.php';
         <form class="card card-body" method="post">
             <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?php echo $edit ? (int) $edit['id'] : 0; ?>">
-            <div class="form-row"><label>Title</label><input name="title" required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
+            <div class="form-row"><label>Title</label><input name="title" minlength="3" maxlength="150" title="Event title must be at least 3 characters." required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
             <div class="form-row">
                 <label>Category</label>
                 <select name="category_id">
@@ -54,12 +54,12 @@ require __DIR__ . '/../includes/admin_header.php';
                     <?php } ?>
                 </select>
             </div>
-            <div class="form-row"><label>City</label><input name="city" required value="<?php echo $edit ? e($edit['city']) : ''; ?>"></div>
+            <div class="form-row"><label>City</label><input name="city" pattern="[a-zA-Z\s\.\-']{2,80}" title="City must contain letters and spaces." required value="<?php echo $edit ? e($edit['city']) : ''; ?>"></div>
             <div class="form-row"><label>Latitude</label><input name="latitude" required value="<?php echo $edit ? e($edit['latitude']) : ''; ?>"></div>
             <div class="form-row"><label>Longitude</label><input name="longitude" required value="<?php echo $edit ? e($edit['longitude']) : ''; ?>"></div>
             <div class="form-row"><label>Date</label><input name="event_date" type="date" required value="<?php echo $edit ? e($edit['event_date']) : ''; ?>"></div>
-            <div class="form-row"><label>Ticket URL</label><input name="ticket_url" value="<?php echo $edit ? e($edit['ticket_url']) : ''; ?>"></div>
-            <div class="form-row"><label>Image URL</label><input name="image" value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
+            <div class="form-row"><label>Ticket URL</label><input name="ticket_url" pattern="https?:\/\/.+" title="Ticket URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['ticket_url']) : ''; ?>"></div>
+            <div class="form-row"><label>Image URL</label><input name="image" pattern="https?:\/\/.+" title="Image URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
             <div class="form-row"><label>Description</label><textarea name="description"><?php echo $edit ? e($edit['description']) : ''; ?></textarea></div>
             <button class="btn" type="submit">Save</button>
         </form>

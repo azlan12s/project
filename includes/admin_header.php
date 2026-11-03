@@ -19,8 +19,8 @@ $admin_links = array(
     array('key' => 'categories', 'href' => site_url('/admin/categories.php'), 'label' => 'Categories'),
     array('key' => 'characters', 'href' => site_url('/admin/characters.php'), 'label' => 'Characters'),
     array('key' => 'merch', 'href' => site_url('/admin/merch.php'), 'label' => 'Merchandise'),
+    array('key' => 'orders', 'href' => site_url('/admin/orders.php'), 'label' => 'Orders'),
     array('key' => 'events', 'href' => site_url('/admin/events.php'), 'label' => 'Events'),
-    array('key' => 'polls', 'href' => site_url('/admin/polls.php'), 'label' => 'Polls'),
     array('key' => 'account', 'href' => site_url('/admin/account.php'), 'label' => 'Account settings'),
 );
 $admin_icons = array(
@@ -32,8 +32,8 @@ $admin_icons = array(
     'categories' => '<path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/>',
     'characters' => '<path d="M12 2a5 5 0 0 1 5 5c0 2-1.1 3.6-2.7 4.5l.2 1.4 4 1.5c1 .4 1.5 1.2 1.5 2.2V20H8v-3.4c0-1 .6-1.8 1.5-2.2l4-1.5.2-1.4C12.1 10.6 11 9 11 7a5 5 0 0 1 1-3Z"/>',
     'merch' => '<path d="M7 4h10l1.5 3H5.5L7 4Zm-2 4h14l-1 12H6L5 8Zm5 3v6h4v-6h-4Z"/>',
+    'orders' => '<path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>',
     'events' => '<path d="M7 2v2H5a2 2 0 0 0-2 2v2h18V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7ZM3 10v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9H3Zm4 3h4v4H7v-4Z"/>',
-    'polls' => '<path d="M4 18h4V8H4v10Zm6 0h4V4h-4v14Zm6 0h4v-6h-4v6Z"/>',
     'account' => '<path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5Z"/>',
 );
 ?>
@@ -49,8 +49,15 @@ $admin_icons = array(
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo e(site_url('/assets/css/app.css')); ?>">
-    <script>document.documentElement.classList.add('js-motion');</script>
+    <link rel="stylesheet" href="<?php echo e(site_url('/assets/css/app.css?v=' . filemtime(__DIR__ . '/../assets/css/app.css'))); ?>">
+    <script>
+        document.documentElement.classList.add('js-motion');
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted || (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0] && window.performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
+                window.location.replace("<?php echo e(site_url('/login.php?relogin=1&next=' . rawurlencode($_SERVER['REQUEST_URI']))); ?>");
+            }
+        });
+    </script>
 </head>
 <body class="admin-body" id="top">
 <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress-bar" id="scrollProgress"></span></div>

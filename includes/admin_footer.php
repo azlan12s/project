@@ -41,7 +41,7 @@
 </button>
 <div class="toast-host" id="toastHost" role="status" aria-live="polite" aria-atomic="false"></div>
 <p class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></p>
-<script src="<?php echo e(site_url('/assets/js/app.js')); ?>"></script>
+<script src="<?php echo e(site_url('/assets/js/app.js?v=' . filemtime(__DIR__ . '/../assets/js/app.js'))); ?>"></script>
 <?php if (isset($extra_js)) { echo $extra_js; } ?>
 </body>
 </html>

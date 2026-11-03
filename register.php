@@ -18,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $theme = (isset($_POST['theme']) && $_POST['theme'] === 'light') ? 'light' : 'dark';
     $font = isset($_POST['font_size']) && in_array($_POST['font_size'], array('sm', 'md', 'lg'), true) ? $_POST['font_size'] : 'md';
 
-    if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 6) {
-        $error = 'Provide a name, valid email, and a password of at least 6 characters.';
+    if ($name === '' || !preg_match("/^[a-zA-Z\s\.\-']{2,60}$/", $name) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || !preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\\\|,.<>\/?~` ]).{8,}$/', $password)) {
+        $error = 'Provide a valid name (2-60 letters), a valid email, and a password of at least 8 characters with uppercase, lowercase, number, and special symbol.';
     } else {
         $email_sql = esc($email);
         $exists = db_one("SELECT id FROM users WHERE email = '$email_sql' LIMIT 1");
@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $page_title = 'Register';
 $hide_navbar = true;
+$hide_footer = true;
 require __DIR__ . '/includes/header.php';
 
 // Side artwork. Missing file just falls back to the gradient panel.
@@ -69,18 +70,18 @@ $join_art = is_file(__DIR__ . '/assets/images/drdoom.webp') ? site_url('/assets/
 
                 <div class="form-row">
                     <label for="name">Name</label>
-                    <input id="name" name="name" autocomplete="name" placeholder="How should we call you?" required>
+                    <input id="name" name="name" autocomplete="name" placeholder="How should we call you?" pattern="[a-zA-Z\s\.\-']{2,60}" minlength="2" maxlength="60" title="Name must be 2-60 characters and contain only letters and spaces." required>
                 </div>
 
                 <div class="form-row">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+                    <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address (e.g., you@example.com)" required>
                 </div>
 
                 <div class="form-row">
                     <label for="password">Password</label>
                     <div class="password-field">
-                        <input id="password" name="password" type="password" autocomplete="new-password" placeholder="At least 6 characters" minlength="6" required>
+                        <input id="password" name="password" type="password" autocomplete="new-password" placeholder="At least 8 chars (A-Z, a-z, 0-9, symbol)" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?~` ]).{8,}" minlength="8" title="Password must be at least 8 characters long with uppercase, lowercase, number, and special symbol." required>
                         <button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false" aria-controls="password">Show</button>
                     </div>
                 </div>

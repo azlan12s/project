@@ -1,5 +1,12 @@
 <?php
 require_once __DIR__ . '/includes/functions.php';
+
+// Only registered (logged in) users can submit feedback.
+if (!is_logged_in()) {
+    flash_set('error', 'Please log in to submit feedback.');
+    redirect('/login.php?next=' . rawurlencode('/feedback.php'));
+}
+
 $user = current_user();
 $error = '';
 $selected_type = '';
@@ -12,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim(isset($_POST['message']) ? $_POST['message'] : '');
     $selected_type = $type;
     $feedback_message = $message;
-    if (!isset($types[$type]) || $message === '' || strlen($message) > 5000) {
-        $error = 'Choose a feedback type and enter a message up to 5,000 characters.';
+    if (!isset($types[$type]) || strlen($message) < 10 || strlen($message) > 5000) {
+        $error = 'Please select a feedback type and provide a message with at least 10 characters.';
     } else {
         $user_id = $user ? (int) $user['id'] : 'NULL';
         $type_sql = esc($type);
@@ -22,12 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             log_activity((int) $user['id'], 'feedback', $type);
         }
-        flash_set('ok', 'Thanks. Your feedback has been sent to the team.');
+        flash_set('ok', 'Thanks! Your feedback has been sent to our team.');
         redirect('/feedback.php');
     }
 }
 
 $page_title = 'Feedback';
+$hide_navbar = true;
+$hide_footer = true;
 require __DIR__ . '/includes/header.php';
 $feedback_art = is_file(__DIR__ . '/assets/images/johnwick.webp') ? site_url('/assets/images/johnwick.webp') : '';
 ?>
@@ -62,13 +71,16 @@ $feedback_art = is_file(__DIR__ . '/assets/images/johnwick.webp') ? site_url('/a
                 </div>
                 <div class="form-row">
                     <label for="feedback-message">Message</label>
-                    <textarea id="feedback-message" name="message" rows="6" maxlength="5000" required><?php echo e($feedback_message); ?></textarea>
+                    <textarea id="feedback-message" name="message" rows="6" maxlength="5000" minlength="10" placeholder="Write your detailed feedback here (at least 10 characters)..." required><?php echo e($feedback_message); ?></textarea>
                 </div>
                 <button class="btn auth-submit" type="submit">Send feedback</button>
             </form>
 
             <div class="auth-divider"><span>THANK YOU</span></div>
             <p class="auth-lede feedback-note">Your feedback helps us make Fan Hub Plus better for every fandom.</p>
+            <div class="login-links auth-links" style="margin-top:16px;">
+                <a class="btn-ghost auth-alt-btn" href="<?php echo e(site_url('/index.php')); ?>">&larr; Back to Home</a>
+            </div>
         </div>
     </div>
 

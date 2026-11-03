@@ -93,15 +93,18 @@
     }
 
     function initPasswordToggle() {
-        var toggle = document.querySelector('.password-toggle');
-        var input = toggle ? document.getElementById(toggle.getAttribute('aria-controls')) : null;
-        if (!toggle || !input) { return; }
-        toggle.addEventListener('click', function () {
-            var reveal = input.type === 'password';
-            input.type = reveal ? 'text' : 'password';
-            toggle.textContent = reveal ? 'Hide' : 'Show';
-            toggle.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
-            toggle.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+        var toggles = document.querySelectorAll('.password-toggle');
+        if (!toggles || toggles.length === 0) { return; }
+        Array.prototype.slice.call(toggles).forEach(function (toggle) {
+            var input = document.getElementById(toggle.getAttribute('aria-controls'));
+            if (!input) { return; }
+            toggle.addEventListener('click', function () {
+                var reveal = input.type === 'password';
+                input.type = reveal ? 'text' : 'password';
+                toggle.textContent = reveal ? 'Hide' : 'Show';
+                toggle.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
+                toggle.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+            });
         });
     }
 
@@ -711,10 +714,583 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape' && !panel.hidden) { setOpen(false); }
         });
+        document.addEventListener('click', function (event) {
+            if (!panel.hidden) {
+                if (!panel.contains(event.target) && !open.contains(event.target)) {
+                    setOpen(false);
+                }
+            }
+        });
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             sendQuestion(input.value);
         });
+    }
+
+    function initFormValidation() {
+        var EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+        var NAME_REGEX = /^[a-zA-Z\s\.\-']{2,60}$/;
+        var STRONG_PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~` ]).{8,}$/;
+        var SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+        var URL_REGEX = /^https?:\/\/.+/i;
+        var YEAR_REGEX = /^(19\d\d|20\d\d)$/;
+        var PRICE_REGEX = /^\d+(\.\d{1,2})?$/;
+
+        function getTargetContainer(field) {
+            return field.closest('.password-field') || field;
+        }
+
+        function getErrorElement(field) {
+            var key = field.id || field.name || 'field';
+            var parent = field.closest('.form-row, .card-body') || field.parentNode;
+            return parent ? parent.querySelector('.field-error-msg[data-for="' + key + '"]') : null;
+        }
+
+        function showError(field, message) {
+            field.classList.add('is-invalid');
+            field.classList.remove('is-valid');
+            field.setAttribute('aria-invalid', 'true');
+            var container = getTargetContainer(field);
+            if (container !== field) {
+                container.classList.add('is-invalid');
+                container.classList.remove('is-valid');
+            }
+
+            var key = field.id || field.name || 'field';
+            var errorEl = getErrorElement(field);
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.className = 'field-error-msg';
+                errorEl.setAttribute('data-for', key);
+                errorEl.setAttribute('role', 'alert');
+                errorEl.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 1a7 7 0 1 0 7 7A7 7 0 0 0 8 1Zm0 10.5a.9.9 0 1 1 .9-.9.9.9 0 0 1-.9.9Zm.9-3.4a.9.9 0 0 1-1.8 0V4.5a.9.9 0 0 1 1.8 0Z"/></svg><span></span>';
+                container.insertAdjacentElement('afterend', errorEl);
+            }
+            errorEl.querySelector('span').textContent = message;
+            errorEl.style.display = 'flex';
+        }
+
+        function clearError(field, markValid) {
+            field.classList.remove('is-invalid');
+            field.removeAttribute('aria-invalid');
+            var container = getTargetContainer(field);
+            if (container !== field) {
+                container.classList.remove('is-invalid');
+            }
+
+            if (markValid) {
+                field.classList.add('is-valid');
+                if (container !== field) {
+                    container.classList.add('is-valid');
+                }
+            } else {
+                field.classList.remove('is-valid');
+                if (container !== field) {
+                    container.classList.remove('is-valid');
+                }
+            }
+
+            var errorEl = getErrorElement(field);
+            if (errorEl) {
+                errorEl.remove();
+            }
+        }
+
+        function validateField(field) {
+            if (field.disabled || field.type === 'hidden' || field.type === 'submit' || field.type === 'button') {
+                return { valid: true };
+            }
+
+            var form = field.form;
+            var val = (field.value || '').trim();
+            var name = (field.name || '').toLowerCase();
+            var type = (field.type || '').toLowerCase();
+            var id = (field.id || '').toLowerCase();
+
+            // Check required
+            if (field.required && !val) {
+                if (type === 'email' || name === 'email') {
+                    return { valid: false, message: 'Email address is required.' };
+                }
+                if (type === 'password' || name.indexOf('password') !== -1) {
+                    return { valid: false, message: 'Password is required.' };
+                }
+                if (field.tagName === 'SELECT') {
+                    return { valid: false, message: 'Please select an option from the list.' };
+                }
+                if (field.tagName === 'TEXTAREA') {
+                    return { valid: false, message: 'This field cannot be empty.' };
+                }
+                return { valid: false, message: (field.title || 'This field is required.') };
+            }
+
+            // If empty and not required, clear error and pass
+            if (!val && !field.required) {
+                return { valid: true, optionalEmpty: true };
+            }
+
+            // HTML5 pattern attribute check
+            if (field.pattern) {
+                try {
+                    var customReg = new RegExp('^(?:' + field.pattern + ')$');
+                    if (!customReg.test(val)) {
+                        return { valid: false, message: field.title || field.getAttribute('data-error-msg') || 'Input does not match the required format.' };
+                    }
+                } catch (e) {}
+            }
+
+            // Email validation
+            if (type === 'email' || name === 'email') {
+                if (!EMAIL_REGEX.test(val)) {
+                    return { valid: false, message: 'Please enter a valid email address (e.g. name@example.com).' };
+                }
+            }
+
+            // Password validation
+            if (name === 'password' || name === 'new_password') {
+                var isRegistrationOrNew = (name === 'new_password') ||
+                    (window.location.pathname.indexOf('register.php') !== -1) ||
+                    (window.location.pathname.indexOf('forgot-password.php') !== -1) ||
+                    (form && form.classList.contains('auth-split--join'));
+
+                if (isRegistrationOrNew) {
+                    if (!STRONG_PWD_REGEX.test(val)) {
+                        return { valid: false, message: 'Must be 8+ chars with uppercase, lowercase, number, and special symbol.' };
+                    }
+                } else if (val.length < 1) {
+                    return { valid: false, message: 'Please enter your password.' };
+                }
+            }
+
+            // Password confirmation
+            if (name === 'confirm_password') {
+                var newPwd = form ? form.querySelector('[name="new_password"], [name="password"]') : null;
+                if (newPwd && val !== newPwd.value) {
+                    return { valid: false, message: 'Passwords do not match.' };
+                }
+            }
+
+            // Name validation
+            if (name === 'name' || id === 'admin-name') {
+                if (!NAME_REGEX.test(val)) {
+                    return { valid: false, message: 'Name must be 2-60 characters and contain only letters, dots, hyphens, and spaces.' };
+                }
+            }
+
+            // Slug validation
+            if (name === 'slug') {
+                if (!SLUG_REGEX.test(val)) {
+                    return { valid: false, message: 'Slug must be lowercase alphanumeric with hyphens (e.g. my-category).' };
+                }
+            }
+
+            // Title validation
+            if (name === 'title' || id === 'article-title') {
+                if (val.length < 3) {
+                    return { valid: false, message: 'Title must be at least 3 characters long.' };
+                }
+            }
+
+            // Textarea / Message / Description / Body validation
+            if (field.tagName === 'TEXTAREA' || name === 'message' || name === 'body') {
+                var minL = parseInt(field.getAttribute('minlength') || (field.required ? '10' : '0'), 10);
+                if (minL > 0 && val.length < minL) {
+                    return { valid: false, message: 'Please provide at least ' + minL + ' characters (currently ' + val.length + ').' };
+                }
+            }
+
+            // URL validation
+            if (type === 'url' || name.indexOf('url') !== -1 || name === 'trailer') {
+                if (!URL_REGEX.test(val)) {
+                    return { valid: false, message: 'Please enter a valid URL starting with http:// or https://' };
+                }
+            }
+
+            // Year validation
+            if (name === 'release_year' || name === 'year') {
+                if (!YEAR_REGEX.test(val)) {
+                    return { valid: false, message: 'Please enter a valid 4-digit year (1900-2099).' };
+                }
+            }
+
+            // Price validation
+            if (name === 'price') {
+                if (!PRICE_REGEX.test(val)) {
+                    return { valid: false, message: 'Please enter a valid price (e.g. 19.99).' };
+                }
+            }
+
+            // General minlength
+            if (field.minLength && field.minLength > 0 && val.length < field.minLength) {
+                return { valid: false, message: 'Must be at least ' + field.minLength + ' characters.' };
+            }
+
+            return { valid: true };
+        }
+
+        var forms = document.querySelectorAll('form');
+        forms.forEach(function (form) {
+            if (form.id === 'assistantForm' || form.id === 'headerSearchForm') {
+                return;
+            }
+
+            // Disable default browser validation bubble to use custom messages and red borders
+            form.setAttribute('novalidate', 'true');
+
+            var inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(function (input) {
+                if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button') {
+                    return;
+                }
+
+                input.addEventListener('blur', function () {
+                    input._blurred = true;
+                    var res = validateField(input);
+                    if (!res.valid) {
+                        showError(input, res.message);
+                    } else {
+                        clearError(input, !res.optionalEmpty);
+                    }
+                });
+
+                input.addEventListener('input', function () {
+                    if (input._blurred || input.classList.contains('is-invalid')) {
+                        var res = validateField(input);
+                        if (!res.valid) {
+                            showError(input, res.message);
+                        } else {
+                            clearError(input, !res.optionalEmpty);
+                        }
+                    }
+                });
+
+                input.addEventListener('change', function () {
+                    var res = validateField(input);
+                    if (!res.valid) {
+                        showError(input, res.message);
+                    } else {
+                        clearError(input, !res.optionalEmpty);
+                    }
+                });
+            });
+
+            form.addEventListener('submit', function (event) {
+                var firstInvalid = null;
+                var formIsValid = true;
+
+                inputs.forEach(function (input) {
+                    if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button' || input.disabled) {
+                        return;
+                    }
+                    input._blurred = true;
+                    var res = validateField(input);
+                    if (!res.valid) {
+                        showError(input, res.message);
+                        formIsValid = false;
+                        if (!firstInvalid) {
+                            firstInvalid = input;
+                        }
+                    } else {
+                        clearError(input, !res.optionalEmpty);
+                    }
+                });
+
+                if (!formIsValid) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    if (firstInvalid) {
+                        var container = getTargetContainer(firstInvalid);
+                        container.classList.add('field-shake');
+                        setTimeout(function () {
+                            container.classList.remove('field-shake');
+                        }, 400);
+                        firstInvalid.focus();
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+        });
+    }
+
+    function initCartSystem() {
+        var CART_KEY = 'fhp_user_cart_v1';
+        var drawer = document.getElementById('sideCartDrawer');
+        var backdrop = document.getElementById('sideCartBackdrop');
+        var floatBtn = document.getElementById('floatingSideCart');
+        var closeBtn = document.getElementById('sideCartClose');
+        var clearBtn = document.getElementById('sideCartClear');
+        var checkoutBtn = document.getElementById('sideCartCheckout');
+        var itemsContainer = document.getElementById('sideCartItems');
+        var badgeCount = document.getElementById('sideCartCount');
+        var drawerCount = document.getElementById('sideCartDrawerCount');
+        var subtotalEl = document.getElementById('sideCartSubtotal');
+        var totalEl = document.getElementById('sideCartTotal');
+
+        function loadCart() {
+            try {
+                return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveCart(cart) {
+            try {
+                localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            } catch (e) {}
+            renderCart();
+        }
+
+        function openDrawer() {
+            if (drawer) {
+                drawer.classList.add('open');
+                drawer.setAttribute('aria-hidden', 'false');
+            }
+            if (backdrop) {
+                backdrop.classList.add('open');
+            }
+        }
+
+        function closeDrawer() {
+            if (drawer) {
+                drawer.classList.remove('open');
+                drawer.setAttribute('aria-hidden', 'true');
+            }
+            if (backdrop) {
+                backdrop.classList.remove('open');
+            }
+        }
+
+        window.openSideCart = openDrawer;
+        window.closeSideCart = closeDrawer;
+
+        function renderCart() {
+            var cart = loadCart();
+            var totalItems = 0;
+            var subtotal = 0;
+
+            cart.forEach(function (item) {
+                totalItems += (item.qty || 1);
+                subtotal += (parseFloat(item.price) || 0) * (item.qty || 1);
+            });
+
+            if (badgeCount) { badgeCount.textContent = totalItems; }
+            if (drawerCount) { drawerCount.textContent = totalItems + (totalItems === 1 ? ' item' : ' items'); }
+            document.querySelectorAll('.page-cart-count').forEach(function (el) {
+                el.textContent = totalItems;
+            });
+
+            if (subtotalEl) { subtotalEl.textContent = '$' + subtotal.toFixed(2); }
+            if (totalEl) { totalEl.textContent = '$' + subtotal.toFixed(2); }
+
+            if (!itemsContainer) { return; }
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<div class="side-cart-empty"><div class="side-cart-empty-icon">🛒</div><p>Your fandom cart is currently empty.</p><a href="merch.php" class="btn" style="display:inline-block;margin-top:12px;padding:8px 18px;">Explore Merch Store</a></div>';
+                if (checkoutBtn) { checkoutBtn.disabled = true; }
+                return;
+            }
+
+            if (checkoutBtn) { checkoutBtn.disabled = false; }
+
+            var html = '';
+            cart.forEach(function (item) {
+                var itemTotal = ((parseFloat(item.price) || 0) * (item.qty || 1)).toFixed(2);
+                html += '<div class="cart-item-card" data-id="' + item.id + '">' +
+                    '<div class="cart-item-thumb" style="background-image:url(\'' + (item.image || '') + '\')"></div>' +
+                    '<div class="cart-item-details">' +
+                        '<h4>' + (item.title || 'Merch Item') + '</h4>' +
+                        '<div class="cart-item-price">$' + item.price + ' <small style="color:var(--muted);font-weight:normal;">(Total: $' + itemTotal + ')</small></div>' +
+                        '<div class="cart-item-qty-row">' +
+                            '<button type="button" class="cart-item-qty-btn cart-qty-minus" data-id="' + item.id + '" aria-label="Decrease quantity">-</button>' +
+                            '<span class="cart-item-qty-num">' + (item.qty || 1) + '</span>' +
+                            '<button type="button" class="cart-item-qty-btn cart-qty-plus" data-id="' + item.id + '" aria-label="Increase quantity">+</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="cart-item-remove" data-id="' + item.id + '" title="Remove item" aria-label="Remove item">&times;</button>' +
+                '</div>';
+            });
+
+            itemsContainer.innerHTML = html;
+
+            itemsContainer.querySelectorAll('.cart-qty-minus').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = btn.getAttribute('data-id');
+                    updateItemQty(id, -1);
+                });
+            });
+
+            itemsContainer.querySelectorAll('.cart-qty-plus').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = btn.getAttribute('data-id');
+                    updateItemQty(id, 1);
+                });
+            });
+
+            itemsContainer.querySelectorAll('.cart-item-remove').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = btn.getAttribute('data-id');
+                    removeItem(id);
+                });
+            });
+        }
+
+        function addToCart(newItem, qtyToAdd) {
+            qtyToAdd = parseInt(qtyToAdd, 10) || 1;
+            var cart = loadCart();
+            var existing = null;
+            for (var i = 0; i < cart.length; i++) {
+                if (String(cart[i].id) === String(newItem.id)) {
+                    existing = cart[i];
+                    break;
+                }
+            }
+
+            if (existing) {
+                existing.qty = (existing.qty || 1) + qtyToAdd;
+            } else {
+                newItem.qty = qtyToAdd;
+                cart.push(newItem);
+            }
+
+            saveCart(cart);
+            if (window.toast) {
+                window.toast('Added "' + newItem.title + '" to your cart!', 'ok');
+            }
+            openDrawer();
+        }
+
+        function updateItemQty(id, delta) {
+            var cart = loadCart();
+            for (var i = 0; i < cart.length; i++) {
+                if (String(cart[i].id) === String(id)) {
+                    cart[i].qty = (cart[i].qty || 1) + delta;
+                    if (cart[i].qty <= 0) {
+                        cart.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            saveCart(cart);
+        }
+
+        function removeItem(id) {
+            var cart = loadCart();
+            cart = cart.filter(function (item) {
+                return String(item.id) !== String(id);
+            });
+            saveCart(cart);
+            if (window.toast) {
+                window.toast('Item removed from cart.', 'info');
+            }
+        }
+
+        if (floatBtn) {
+            floatBtn.addEventListener('click', function () {
+                if (drawer && drawer.classList.contains('open')) {
+                    closeDrawer();
+                } else {
+                    openDrawer();
+                }
+            });
+        }
+
+        if (closeBtn) { closeBtn.addEventListener('click', closeDrawer); }
+        if (backdrop) { backdrop.addEventListener('click', closeDrawer); }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && drawer && drawer.classList.contains('open')) {
+                closeDrawer();
+            }
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                saveCart([]);
+                if (window.toast) { window.toast('Cart cleared.', 'info'); }
+            });
+        }
+
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function () {
+                var cart = loadCart();
+                if (!cart || cart.length === 0) {
+                    if (window.toast) { window.toast('Your cart is empty!', 'info'); }
+                    return;
+                }
+
+                if (!window.FHP_USER) {
+                    if (window.toast) {
+                        window.toast('Please log in or register to complete your order.', 'error');
+                    }
+                    itemsContainer.innerHTML = '<div class="cart-auth-gate">' +
+                        '<h4>Sign in to Checkout</h4>' +
+                        '<p>You must be a registered member to place Cash on Delivery merchandise orders.</p>' +
+                        '<div class="cart-auth-btns">' +
+                            '<a href="login.php?next=' + encodeURIComponent('checkout.php') + '" class="btn" style="padding:9px 18px;">Log In</a>' +
+                            '<a href="register.php?next=' + encodeURIComponent('checkout.php') + '" class="btn-ghost" style="padding:9px 18px;">Register</a>' +
+                        '</div>' +
+                        '<button type="button" class="btn-ghost" id="backToCartBtn" style="margin-top:14px;font-size:0.8rem;border:none;cursor:pointer;">&larr; Back to cart items</button>' +
+                    '</div>';
+                    var backBtn = document.getElementById('backToCartBtn');
+                    if (backBtn) { backBtn.addEventListener('click', renderCart); }
+                    return;
+                }
+
+                // User is authenticated: proceed to Cash on Delivery checkout
+                window.location.href = 'checkout.php';
+            });
+        }
+
+        // Delegate Add to Cart buttons
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.merch-add-btn');
+            if (btn) {
+                e.preventDefault();
+                var item = {
+                    id: btn.getAttribute('data-id'),
+                    title: btn.getAttribute('data-title'),
+                    price: btn.getAttribute('data-price'),
+                    image: btn.getAttribute('data-image'),
+                    cat: btn.getAttribute('data-cat')
+                };
+                addToCart(item, 1);
+            }
+        });
+
+        // Detail page quantity and add to cart
+        var detailAddBtn = document.getElementById('detailAddToCart');
+        var detailQtyInput = document.getElementById('detailQty');
+        var qtyMinus = document.getElementById('qtyMinus');
+        var qtyPlus = document.getElementById('qtyPlus');
+
+        if (qtyMinus && detailQtyInput) {
+            qtyMinus.addEventListener('click', function () {
+                var cur = parseInt(detailQtyInput.value, 10) || 1;
+                if (cur > 1) { detailQtyInput.value = cur - 1; }
+            });
+        }
+        if (qtyPlus && detailQtyInput) {
+            qtyPlus.addEventListener('click', function () {
+                var cur = parseInt(detailQtyInput.value, 10) || 1;
+                if (cur < 99) { detailQtyInput.value = cur + 1; }
+            });
+        }
+        if (detailAddBtn && detailQtyInput) {
+            detailAddBtn.addEventListener('click', function () {
+                var qty = parseInt(detailQtyInput.value, 10) || 1;
+                var item = {
+                    id: detailAddBtn.getAttribute('data-id'),
+                    title: detailAddBtn.getAttribute('data-title'),
+                    price: detailAddBtn.getAttribute('data-price'),
+                    image: detailAddBtn.getAttribute('data-image'),
+                    cat: detailAddBtn.getAttribute('data-cat')
+                };
+                addToCart(item, qty);
+            });
+        }
+
+        renderCart();
     }
 
     function boot() {
@@ -732,6 +1308,8 @@
         initAdminSidebar();
         initShareBar();
         initAssistant();
+        initFormValidation();
+        initCartSystem();
     }
 
     if (document.readyState === 'loading') {

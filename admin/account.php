@@ -51,23 +51,23 @@ require __DIR__ . '/../includes/admin_header.php';
         <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
         <div class="form-row">
             <label for="admin-name">Display name</label>
-            <input id="admin-name" name="name" value="<?php echo e(isset($_POST['name']) ? $_POST['name'] : $user['name']); ?>" autocomplete="name" maxlength="120" required>
+            <input id="admin-name" name="name" value="<?php echo e(isset($_POST['name']) ? $_POST['name'] : $user['name']); ?>" autocomplete="name" pattern="[a-zA-Z\s\.\-']{2,120}" minlength="2" maxlength="120" title="Name must be 2-120 characters with letters, spaces, dots or hyphens." required>
         </div>
         <div class="form-row">
             <label for="admin-email">Login username (email)</label>
-            <input id="admin-email" name="email" type="email" value="<?php echo e(isset($_POST['email']) ? $_POST['email'] : $user['email']); ?>" autocomplete="username" maxlength="160" required>
+            <input id="admin-email" name="email" type="email" value="<?php echo e(isset($_POST['email']) ? $_POST['email'] : $user['email']); ?>" autocomplete="username" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" maxlength="160" title="Please enter a valid email address." required>
         </div>
         <div class="form-row">
             <label for="current-password">Current password</label>
-            <input id="current-password" name="current_password" type="password" autocomplete="current-password" required>
+            <input id="current-password" name="current_password" type="password" autocomplete="current-password" title="Please enter your current password to save changes." required>
         </div>
         <div class="form-row">
             <label for="new-password">New password</label>
-            <input id="new-password" name="new_password" type="password" autocomplete="new-password" minlength="12">
+            <input id="new-password" name="new_password" type="password" autocomplete="new-password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?~` ]).{8,}" minlength="8" placeholder="At least 8 chars with uppercase, lowercase, number, symbol" title="New password must be at least 8 characters long with uppercase, lowercase, number, and special symbol.">
         </div>
         <div class="form-row">
             <label for="confirm-password">Confirm new password</label>
-            <input id="confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="12">
+            <input id="confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter new password" title="Confirm password must match new password.">
         </div>
         <button class="btn" type="submit">Save account</button>
     </form>

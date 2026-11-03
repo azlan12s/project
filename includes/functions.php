@@ -59,6 +59,11 @@ function esc($value)
     return mysqli_real_escape_string($conn, (string) $value);
 }
 
+function db_escape($value)
+{
+    return esc($value);
+}
+
 /* ---------------------------------------------------------------------------
  * card()
  *
@@ -244,16 +249,27 @@ function is_admin()
     return $user && $user['role'] === 'admin';
 }
 
+function prevent_browser_cache()
+{
+    if (!headers_sent()) {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0');
+        header('Pragma: no-cache');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+    }
+}
+
 function require_login()
 {
+    prevent_browser_cache();
     if (!is_logged_in()) {
-        header('Location: ' . site_url('/login.php?next=' . urlencode($_SERVER['REQUEST_URI'])));
+        header('Location: ' . site_url('/login.php?relogin=1&next=' . urlencode($_SERVER['REQUEST_URI'])));
         exit;
     }
 }
 
 function require_admin()
 {
+    prevent_browser_cache();
     require_login();
     if (!is_admin()) {
         http_response_code(403);
@@ -310,8 +326,13 @@ function category_by_slug($slug)
     return db_one("SELECT * FROM categories WHERE slug = '$slug' LIMIT 1");
 }
 
-function log_activity($user_id, $action, $detail)
+function log_activity($user_id, $action = '', $detail = '')
 {
+    if ($detail === '' && func_num_args() === 2) {
+        $detail = (string) $action;
+        $action = (string) $user_id;
+        $user_id = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
+    }
     $user_id = (int) $user_id;
     $action = esc($action);
     $detail = esc($detail);
@@ -382,6 +403,44 @@ function ensure_srs_tables()
         UNIQUE KEY uniq_event_user (event_id, user_id),
         INDEX idx_rsvp_event (event_id),
         INDEX idx_rsvp_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    db_query("CREATE TABLE IF NOT EXISTS merch_orders (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        user_id INT UNSIGNED NOT NULL,
+        order_number VARCHAR(60) NOT NULL UNIQUE,
+        total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        payment_method VARCHAR(60) NOT NULL DEFAULT 'Cash on Delivery',
+        status ENUM('pending','successful','cancelled') NOT NULL DEFAULT 'pending',
+        shipping_name VARCHAR(120) NOT NULL,
+        shipping_phone VARCHAR(40) NOT NULL,
+        shipping_address TEXT NOT NULL,
+        shipping_city VARCHAR(80) NOT NULL,
+        order_notes TEXT,
+        created_at DATETIME NOT NULL,
+        updated_at DATETIME NOT NULL,
+        INDEX idx_mo_user (user_id),
+        INDEX idx_mo_status (status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    db_query("CREATE TABLE IF NOT EXISTS merch_order_items (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        order_id INT UNSIGNED NOT NULL,
+        merch_id INT UNSIGNED NOT NULL,
+        title VARCHAR(180) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        quantity INT UNSIGNED NOT NULL DEFAULT 1,
+        image VARCHAR(255) DEFAULT '',
+        INDEX idx_moi_order (order_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    db_query("CREATE TABLE IF NOT EXISTS password_resets (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(160) NOT NULL,
+        token VARCHAR(64) NOT NULL,
+        created_at DATETIME NOT NULL,
+        INDEX idx_pr_email (email),
+        INDEX idx_pr_token (token)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     db_query("CREATE TABLE IF NOT EXISTS fandom_polls (
@@ -513,6 +572,11 @@ function ensure_srs_tables()
     if ($rsvp_count && (int) $rsvp_count['c'] === 0) {
         db_query("INSERT IGNORE INTO event_rsvps (event_id, user_id, status, created_at) VALUES (1, 2, 'going', NOW()), (2, 2, 'interested', NOW()), (3, 1, 'going', NOW())");
     }
+}
+
+function fan_profile_summary($user_id)
+{
+    return user_fan_profile($user_id);
 }
 
 function user_fan_profile($user_id)

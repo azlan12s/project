@@ -46,7 +46,7 @@ require __DIR__ . '/../includes/admin_header.php';
         <form class="card card-body" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?php echo $edit ? (int) $edit['id'] : 0; ?>">
-            <div class="form-row"><label>Title</label><input name="title" required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
+            <div class="form-row"><label>Title</label><input name="title" minlength="3" maxlength="150" title="Merch title must be at least 3 characters." required value="<?php echo $edit ? e($edit['title']) : ''; ?>"></div>
             <div class="form-row">
                 <label>Category</label>
                 <select name="category_id">
@@ -56,7 +56,7 @@ require __DIR__ . '/../includes/admin_header.php';
                 </select>
             </div>
             <div class="form-row"><label>Tag</label><input name="tag" placeholder="Limited Edition / Pre-Order" value="<?php echo $edit ? e($edit['tag']) : ''; ?>"></div>
-            <div class="form-row"><label>Image URL</label><input name="image" value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
+            <div class="form-row"><label>Image URL</label><input name="image" pattern="https?:\/\/.+" title="Image URL must begin with http:// or https://" placeholder="https://..." value="<?php echo $edit ? e($edit['image']) : ''; ?>"></div>
             <div class="form-row"><label>Or upload</label><input type="file" name="image_file" accept="image/*"></div>
             <div class="form-row"><label>Description</label><textarea name="description"><?php echo $edit ? e($edit['description']) : ''; ?></textarea></div>
             <button class="btn" type="submit">Save</button>

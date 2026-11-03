@@ -39,8 +39,8 @@ require __DIR__ . '/../includes/admin_header.php';
         <form class="card card-body" method="post">
             <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
             <input type="hidden" name="id" value="<?php echo $edit ? (int) $edit['id'] : 0; ?>">
-            <div class="form-row"><label>Name</label><input name="name" required value="<?php echo $edit ? e($edit['name']) : ''; ?>"></div>
-            <div class="form-row"><label>Slug</label><input name="slug" value="<?php echo $edit ? e($edit['slug']) : ''; ?>"></div>
+            <div class="form-row"><label>Name</label><input name="name" minlength="2" maxlength="60" title="Category name must be 2-60 characters." required value="<?php echo $edit ? e($edit['name']) : ''; ?>"></div>
+            <div class="form-row"><label>Slug</label><input name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" title="Slug must contain lowercase letters, numbers, and hyphens (e.g. anime-series)." value="<?php echo $edit ? e($edit['slug']) : ''; ?>"></div>
             <div class="form-row"><label>Icon</label><input name="icon" value="<?php echo $edit ? e($edit['icon']) : ''; ?>"></div>
             <div class="form-row"><label>Description</label><textarea name="description"><?php echo $edit ? e($edit['description']) : ''; ?></textarea></div>
             <button class="btn" type="submit">Save</button>
