@@ -1,0 +1,10 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^explore/?$ explore.php [L,QSA]
+RewriteRule ^explore/([a-z0-9\-]+)/?$ explore.php?category=$1 [L,QSA]
+RewriteRule ^content/([0-9]+)/?$ content.php?id=$1 [L,QSA]
+RewriteRule ^events/map/?$ events-map.php [L,QSA]

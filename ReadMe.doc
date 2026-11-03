@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fan Hub Plus - Mandatory ReadMe & Project Documentation</title>
+<style>
+body { font-family: Calibri, Arial, sans-serif; line-height: 1.5; color: #111; margin: 32px; }
+h1 { color: #8b0015; border-bottom: 2px solid #8b0015; padding-bottom: 6px; }
+h2 { color: #2f4834; margin-top: 24px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+th { background: #f4f4f5; }
+code { background: #f4f4f5; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; }
+</style>
+</head>
+<body>
+<h1>Fan Hub Plus — TechWiz 7 (Fandom Universe)</h1>
+<p><strong>End-to-End Web Solutions — Mandatory ReadMe &amp; Technical Documentation</strong></p>
+
+<h2>1. Problem Definition</h2>
+<p>Pop-culture enthusiasts across <strong>Anime, Gaming, Movies, TV Shows / Cartoons, K-Pop, Comics, Manga, and Cosplay</strong> face fragmented content across disconnected portals. <strong>Fan Hub Plus</strong> provides a unified, responsive, and accessible web application featuring multi-level content exploration, character profiles, display-only merchandise showcases, interactive Leaflet/OpenStreetMap event maps, moderated community articles, personal bookmarking with notes, and a domain-focused AI Fandom Assistant.</p>
+
+<h2>2. Mandatory Project Installation &amp; Execution Instructions</h2>
+<ol>
+  <li><strong>Install XAMPP / WAMP</strong> with Apache, MySQL, and PHP 8.x enabled.</li>
+  <li><strong>Copy Project Directory</strong>: Place <code>club-main</code> inside <code>htdocs</code> (e.g., <code>C:\xampp\htdocs\club-main</code> or <code>D:\xammppp\htdocs\club-main</code>).</li>
+  <li><strong>Start Apache &amp; MySQL</strong> from the XAMPP Control Panel.</li>
+  <li><strong>Run 1-Click Database Installer</strong>: Open <code>http://localhost/club-main/install.php</code> in your browser to automatically create and seed the <code>fan_hub_plus</code> database (or import <code>schema.sql</code> via phpMyAdmin).</li>
+  <li><strong>Open Application</strong>: Visit <code>http://localhost/club-main/index.php</code>.</li>
+</ol>
+
+<h2>3. Mandatory User Credentials</h2>
+<table>
+  <thead>
+    <tr><th>Role</th><th>Email</th><th>Password</th><th>Portal URL</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Administrator</strong></td><td><code>admin@fanhubplus.test</code></td><td><code>Admin@123</code></td><td><code>/admin/index.php</code></td></tr>
+    <tr><td><strong>Regular User</strong></td><td><code>user@fanhubplus.test</code></td><td><code>User@123</code></td><td><code>/dashboard.php</code></td></tr>
+  </tbody>
+</table>
+
+<h2>4. Design Specifications &amp; Architecture</h2>
+<ul>
+  <li><strong>Frontend</strong>: HTML5, CSS3 (Custom properties for Dark/Light themes, responsive 4-column grid), Vanilla JavaScript ES6 (<code>assets/js/app.js</code>).</li>
+  <li><strong>Backend</strong>: PHP 8.x with MySQLi prepared/escaped queries, CSRF token protection, and role-based server guards (<code>require_login()</code>, <code>require_admin()</code>).</li>
+  <li><strong>Database</strong>: Normalized MySQL schema (<code>schema.sql</code>) with 12 tables: <code>users</code>, <code>categories</code>, <code>contents</code>, <code>character_profiles</code>, <code>events</code>, <code>merchandise_items</code>, <code>bookmarks</code>, <code>item_bookmarks</code>, <code>media_ratings</code>, <code>feedback</code>, <code>activity_logs</code>, and <code>chatbot_queries</code>.</li>
+  <li><strong>External APIs &amp; Libraries</strong>: Leaflet 1.9.4 + OpenStreetMap tiles for geolocation event mapping; Google Gemini / OpenAI-compatible AI endpoint + Local Fandom Knowledge Engine for the AI Chatbot.</li>
+</ul>
+
+<h2>5. Test Data &amp; Validation Summary</h2>
+<table>
+  <thead>
+    <tr><th>Module</th><th>Test Case</th><th>Result</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Fandom Content Explorer</td><td>Filter by Category, Genre, Release Year, and Content Type + Keyword Search</td><td>Passed</td></tr>
+    <tr><td>Character &amp; Merch Showcase</td><td>Fandom category chips, detail views, Share bar, and Bookmarking with notes</td><td>Passed</td></tr>
+    <tr><td>Interactive Events Map</td><td>Filter by City/Fandom + Leaflet marker popups and external ticket links</td><td>Passed</td></tr>
+    <tr><td>Community Articles &amp; Ratings</td><td>User submits article (Pending) -&gt; Admin approves (Published); 1–5 Star Reviews</td><td>Passed</td></tr>
+    <tr><td>AI Chatbot Assistant</td><td>Answers Anime/Cartoon/K-Pop/Site queries; blocks off-topic queries; logs to DB</td><td>Passed</td></tr>
+    <tr><td>Fandom Trivia &amp; XP Arena</td><td>Category-filtered lore quizzes, instant explanations, Fan Rank Badges &amp; Leaderboard</td><td>Passed</td></tr>
+    <tr><td>Community Polls &amp; Versus Battles</td><td>Live voting across 8 fandoms with real-time percentage progress bars &amp; Admin Poll CRUD</td><td>Passed</td></tr>
+    <tr><td>Event RSVP &amp; .ics Calendar Export</td><td>Going/Interested attendance tracking + RFC 5545 .ics calendar file download</td><td>Passed</td></tr>
+    <tr><td>Recommendations &amp; Data Exports</td><td>Personalized For-You recommendations, Bookmarks CSV export &amp; Admin Analytics CSV export</td><td>Passed</td></tr>
+  </tbody>
+</table>
+
+<h2>6. AI Tools Acknowledgment</h2>
+<p>This project integrates an AI-powered Fandom Assistant (<code>assistant.php</code>, <code>config/ai.php</code>) supporting Google Gemini API and OpenAI-compatible endpoints with a built-in Fandom Knowledge fallback, and utilized AI pair-programming assistance for SRS compliance verification and documentation.</p>
+</body>
+</html>

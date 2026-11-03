@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fan Hub Plus — TechWiz 7 Project Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #070b14;
+            --card: #0f172a;
+            --card-2: #131e36;
+            --line: rgba(148, 163, 184, 0.18);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #ec4899;
+            --accent-2: #38bdf8;
+            --ok: #22c55e;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: radial-gradient(circle at 85% 12%, rgba(236, 72, 153, 0.16), transparent 45%),
+                        radial-gradient(circle at 12% 85%, rgba(56, 189, 248, 0.14), transparent 45%),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .deck-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        .deck-brand {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+        }
+        .deck-brand em {
+            color: var(--accent);
+            font-style: normal;
+        }
+        .deck-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-deck {
+            background: var(--card-2);
+            color: var(--text);
+            border: 1px solid var(--line);
+            padding: 8px 14px;
+            border-radius: 99px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-deck:hover {
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .btn-deck.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .deck-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .slide {
+            display: none;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 44px 52px;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+            animation: slideIn 0.28s ease-out;
+        }
+        .slide.active {
+            display: block;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .kicker {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            color: #f472b6;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+        h1 {
+            font-family: 'Syne', 'Outfit', sans-serif;
+            font-size: clamp(2.1rem, 3.8vw, 3.3rem);
+            margin: 0 0 14px;
+            line-height: 1.12;
+        }
+        h2 {
+            font-family: 'Syne', 'Outfit', sans-serif;
+            font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+            margin: 0 0 12px;
+            line-height: 1.18;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.12rem;
+            line-height: 1.6;
+            max-width: 840px;
+            margin: 0 0 26px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+        .box {
+            background: var(--card-2);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .box h3 {
+            margin: 0 0 8px;
+            font-size: 1.12rem;
+            color: #fff;
+        }
+        .box p, .box li {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.55;
+            margin: 0;
+        }
+        .box ul {
+            margin: 8px 0 0;
+            padding-left: 18px;
+        }
+        .box li {
+            margin-bottom: 6px;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 99px;
+            background: rgba(56, 189, 248, 0.14);
+            color: var(--accent-2);
+            margin-bottom: 8px;
+        }
+        .tag.new {
+            background: rgba(34, 197, 94, 0.16);
+            color: var(--ok);
+        }
+        .notes-box {
+            margin-top: 24px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            background: rgba(236, 72, 153, 0.08);
+            border-left: 4px solid var(--accent);
+            font-size: 0.94rem;
+            color: #e2e8f0;
+            display: none;
+        }
+        body.show-notes .notes-box {
+            display: block;
+        }
+        .deck-progress {
+            height: 4px;
+            background: var(--line);
+            width: 100%;
+        }
+        .deck-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            width: 10%;
+            transition: width 0.25s ease;
+        }
+        table.slide-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.92rem;
+        }
+        table.slide-table th, table.slide-table td {
+            border: 1px solid var(--line);
+            padding: 10px 12px;
+            text-align: left;
+        }
+        table.slide-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="show-notes">
+    <div class="deck-progress"><div class="deck-progress-bar" id="progressBar"></div></div>
+    <header class="deck-topbar">
+        <div class="deck-brand">Fan Hub <em>Plus</em> · TechWiz 7 Presentation Deck</div>
+        <div class="deck-controls">
+            <span id="slideCounter" style="color:var(--muted); font-size:0.9rem; margin-right:6px;">Slide 1 / 10</span>
+            <button class="btn-deck" type="button" id="prevBtn">&larr; Prev</button>
+            <button class="btn-deck primary" type="button" id="nextBtn">Next &rarr;</button>
+            <button class="btn-deck" type="button" id="notesBtn">Speaker Notes (N)</button>
+            <button class="btn-deck" type="button" id="fsBtn">Fullscreen (F)</button>
+            <a class="btn-deck" href="index.php" target="_blank">Open Live Site &nearr;</a>
+        </div>
+    </header>
+
+    <main class="deck-stage">
+        <!-- SLIDE 1: Title -->
+        <section class="slide active">
+            <span class="kicker">TechWiz 7 · Fandom Universe</span>
+            <h1>Fan Hub Plus: Eight Fandoms, One Interactive Ecosystem</h1>
+            <p class="subtitle">A centralized, responsive, accessible full-stack web platform uniting Anime, Gaming, Movies, TV Shows, K-Pop, Comics, Manga, and Cosplay with AI-assisted discovery, geolocation mapping, and gamified community engagement.</p>
+            <div class="grid-4">
+                <div class="box"><span class="tag">Scope</span><h3>8 Core Fandoms</h3><p>Dedicated hubs with curated spotlights, trailers, cosplay guides, and catalogue filters.</p></div>
+                <div class="box"><span class="tag">Database</span><h3>17 Normalized Tables</h3><p>3NF MySQL relational architecture covering content, events, merch, trivia XP, and polls.</p></div>
+                <div class="box"><span class="tag">Intelligence</span><h3>AI Fandom Assistant</h3><p>Domain-guarded chatbot for Anime, Cartoons, K-Pop &amp; site navigation with DB query logging.</p></div>
+                <div class="box"><span class="tag new">Enhanced</span><h3>Gamified Community</h3><p>Fandom Trivia &amp; XP Arena, Live Versus Polls, Event RSVP + .ics Calendar, and CSV Exports.</p></div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 1):</strong> Welcome judges and audience! Today we are presenting <em>Fan Hub Plus</em> for TechWiz 7 (Fandom Universe). Instead of forcing fans to jump across dozens of disconnected websites for anime, gaming, K-Pop, or comic conventions, Fan Hub Plus unifies all 8 major fandoms into a single interactive platform.
+            </div>
+        </section>
+
+        <!-- SLIDE 2: Problem Statement & Solution -->
+        <section class="slide">
+            <span class="kicker">01 · Problem &amp; Vision</span>
+            <h2>Solving Pop-Culture Fragmentation</h2>
+            <p class="subtitle">Why modern fandom enthusiasts need a unified, moderated, and interactive hub.</p>
+            <div class="grid-2">
+                <div class="box">
+                    <span class="tag">The Problem</span>
+                    <h3>Fragmented &amp; Passive Portals</h3>
+                    <ul>
+                        <li>Fans juggle separate wikis, video sites, convention calendars, and forums across 8 different pop-culture verticals.</li>
+                        <li>No unified bookmarking or personal note-taking across articles, characters, and collector merchandise.</li>
+                        <li>Lack of local event discovery by geographic distance or calendar integration.</li>
+                        <li>Generic chatbots hallucinate off-topic answers instead of linking to verified platform content.</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <span class="tag new">Our Solution</span>
+                    <h3>Fan Hub Plus Ecosystem</h3>
+                    <ul>
+                        <li><strong>Multi-Level Content Explorer:</strong> Filter by Fandom, Genre, Year, Type, and Sort order (`explore.php`).</li>
+                        <li><strong>Unified Bookmarks Drawer:</strong> Save Articles, Characters &amp; Merch with personal study notes + CSV export (`bookmarks.php`).</li>
+                        <li><strong>Leaflet Geolocation Map:</strong> Haversine radius search ("Find events near me") + RSVP &amp; `.ics` calendar download.</li>
+                        <li><strong>Gamified Engagement:</strong> Trivia XP Arena, Fan Rank Badges, and Live Community Polls.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 2):</strong> Explain the core problem from the SRS: pop-culture fans face fragmented portals. Our solution connects discovery, curation, geolocation events, and interactive community challenges under one account.
+            </div>
+        </section>
+
+        <!-- SLIDE 3: Core SRS Modules -->
+        <section class="slide">
+            <span class="kicker">02 · SRS Compliance</span>
+            <h2>Complete End-to-End SRS Module Coverage</h2>
+            <p class="subtitle">Every mandatory requirement from the TechWiz 7 SRS is implemented and verified.</p>
+            <div class="grid-3">
+                <div class="box">
+                    <span class="tag">Module 1</span>
+                    <h3>8 Fandom Landing Hubs</h3>
+                    <p>Dedicated pages (`anime.php` to `cosplay.php`) featuring hero counters, 5 curated spotlights, video gallery carousels, cosplay craft notes, and roadmaps.</p>
+                </div>
+                <div class="box">
+                    <span class="tag">Module 2</span>
+                    <h3>Multimedia &amp; Character Lore</h3>
+                    <p>Video trailers, audio soundtracks, and explainers (`multimedia.php`) plus rich character biographies, timelines, and related titles (`character.php`).</p>
+                </div>
+                <div class="box">
+                    <span class="tag">Module 3</span>
+                    <h3>Display-Only Merch Showcase</h3>
+                    <p>Collector showcase (`merch.php`) with Limited Edition and Pre-Order drops, view counters, and bookmarking—strictly display-only per SRS.</p>
+                </div>
+                <div class="box">
+                    <span class="tag">Module 4</span>
+                    <h3>Leaflet + OSM Events Map</h3>
+                    <p>Interactive world map (`events-map.php`) with browser geolocation radius filtering (25–250 km) and city/date filtering (`events.php`).</p>
+                </div>
+                <div class="box">
+                    <span class="tag">Module 5</span>
+                    <h3>Moderated Fan Articles &amp; Reviews</h3>
+                    <p>Users submit articles (`submit-article.php`) into the `pending` queue; Admins publish or reject (`admin/moderation.php`). 1–5 star ratings on all media.</p>
+                </div>
+                <div class="box">
+                    <span class="tag">Module 6</span>
+                    <h3>Domain-Restricted AI Chatbot</h3>
+                    <p>Answers Anime, Cartoon, K-Pop, and site queries while strictly blocking off-topic prompts (math, coding, politics) and logging to `chatbot_queries`.</p>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 3):</strong> Walk judges through how every single SRS requirement is fulfilled—including strict adherence to display-only merchandise and domain-restricted AI assistant responses.
+            </div>
+        </section>
+
+        <!-- SLIDE 4: Feature Enhancements Overview -->
+        <section class="slide">
+            <span class="kicker">03 · Value-Added Feature Enhancements</span>
+            <h2>5 High-Impact Feature Enhancements Built for Presentation</h2>
+            <p class="subtitle">Beyond baseline CRUD, we engineered five interactive functional modules—preserving the exact UI design system—to make the platform come alive during live evaluation.</p>
+            <table class="slide-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Feature Enhancement</th>
+                        <th>Key Capabilities</th>
+                        <th>Live Route</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td><strong>Fandom Trivia &amp; XP Arena</strong></td>
+                        <td>16 lore questions across 8 fandoms, instant explanations, XP rewards, 4 Fan Rank Badges &amp; Community Leaderboard</td>
+                        <td><a href="quiz.php" target="_blank" style="color:var(--accent-2)"><code>/quiz.php</code></a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td><strong>Live Polls &amp; Versus Battles</strong></td>
+                        <td>Real-time community voting with instant percentage bars, category filters &amp; Admin Poll CRUD</td>
+                        <td><a href="polls.php" target="_blank" style="color:var(--accent-2)"><code>/polls.php</code></a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td><strong>Event RSVP &amp; .ics Calendar Export</strong></td>
+                        <td>"I'm Going" / "Interested" attendance counters, Dashboard RSVP tracker &amp; RFC 5545 `.ics` calendar download</td>
+                        <td><a href="event.php?id=1" target="_blank" style="color:var(--accent-2)"><code>/event.php?id=1</code></a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td><strong>Personalized "For You" &amp; History</strong></td>
+                        <td>Recommendation engine driven by user favorites/bookmarks/ratings + Recently Viewed tracker + Bookmarks CSV export</td>
+                        <td><a href="dashboard.php" target="_blank" style="color:var(--accent-2)"><code>/dashboard.php</code></a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td><strong>Admin Analytics CSV &amp; Audit Log</strong></td>
+                        <td>1-click CSV analytics report download, live Activity Audit Log table &amp; Poll Management desk</td>
+                        <td><a href="admin/index.php" target="_blank" style="color:var(--accent-2)"><code>/admin/index.php</code></a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 4):</strong> Highlight why these 5 feature enhancements make our project stand out: they transform the website from a static content directory into an active community ecosystem with gamification, live voting, calendar interoperability, and data portability.
+            </div>
+        </section>
+
+        <!-- SLIDE 5: Deep Dive — Gamification & Polls -->
+        <section class="slide">
+            <span class="kicker">04 · Enhancement Deep Dive</span>
+            <h2>Gamified Fan XP System, Trivia Arena &amp; Live Polls</h2>
+            <p class="subtitle">Rewarding every meaningful user interaction across the platform.</p>
+            <div class="grid-2">
+                <div class="box">
+                    <span class="tag new">Gamification Engine</span>
+                    <h3>Dynamic Fan XP &amp; Rank Progression</h3>
+                    <ul>
+                        <li><strong>Quiz Correct Answers:</strong> +20 to +25 XP per question (`quiz_attempts`)</li>
+                        <li><strong>Submitting Fan Articles:</strong> +30 XP (`contents`)</li>
+                        <li><strong>5-Star Media Reviews:</strong> +15 XP (`media_ratings`)</li>
+                        <li><strong>Event RSVPs:</strong> +15 XP (`event_rsvps`)</li>
+                        <li><strong>Bookmarks &amp; Poll Votes:</strong> +10 XP (`bookmarks`, `fandom_poll_votes`)</li>
+                        <li><strong>4 Tier Badges:</strong> <em>Rookie Fan</em> (0+) &rarr; <em>Lore Seeker</em> (50+) &rarr; <em>Fandom Vanguard</em> (150+) &rarr; <em>Grandmaster Otaku</em> (300+ XP)</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <span class="tag new">Community Voice</span>
+                    <h3>Fandom Polls &amp; Versus Debates</h3>
+                    <ul>
+                        <li>Pre-seeded with iconic debates across Anime, Gaming, K-Pop, Movies, Comics, and Cosplay.</li>
+                        <li>Instant visual progress bars showing percentage breakdown and total vote count.</li>
+                        <li>Duplicate-vote protection per user/session (`ON DUPLICATE KEY UPDATE` allows changing your pick without inflating totals).</li>
+                        <li>Full Admin Desk integration (`/admin/polls.php`) to launch new polls, close voting, or remove polls.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 5):</strong> During the demo, we can open `/quiz.php`, answer a few questions live, show the instant green/red lore explanations and XP gain, and then cast a vote on `/polls.php` to watch the percentage bars update in real time.
+            </div>
+        </section>
+
+        <!-- SLIDE 6: Deep Dive — Events, Recommendations & Exports -->
+        <section class="slide">
+            <span class="kicker">05 · Utility &amp; Personalization</span>
+            <h2>Smart Recommendations, Event RSVP &amp; Data Portability</h2>
+            <p class="subtitle">Practical utilities that real fans and administrators use every day.</p>
+            <div class="grid-3">
+                <div class="box">
+                    <span class="tag new">Event Utility</span>
+                    <h3>RSVP &amp; .ics Calendar</h3>
+                    <p>Fans mark <strong>Going</strong> or <strong>Interested</strong> on any convention or screening. Clicking <strong>Download .ics Calendar</strong> generates an RFC 5545 file with GPS coordinates (`GEO`) for Google, Apple, or Outlook Calendar.</p>
+                </div>
+                <div class="box">
+                    <span class="tag new">Smart Discovery</span>
+                    <h3>"For You" Engine</h3>
+                    <p>Analyzes each member's `favorite_categories`, bookmarked fandoms, and 4–5★ rated titles to surface personalized recommendations on the Dashboard and Content pages, alongside a session-based <strong>Recently Viewed</strong> shelf.</p>
+                </div>
+                <div class="box">
+                    <span class="tag new">Data Portability</span>
+                    <h3>1-Click CSV Exports</h3>
+                    <p>Members can export their entire Bookmarks &amp; Study Notes drawer (`bookmarks.php?export=csv`), while Administrators can export platform KPI metrics and category views (`admin/index.php?export=analytics_csv`).</p>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 6):</strong> Judges love seeing real-world interoperability like `.ics` calendar files and CSV exports because they prove backend mastery beyond basic HTML forms.
+            </div>
+        </section>
+
+        <!-- SLIDE 7: System Architecture & Database -->
+        <section class="slide">
+            <span class="kicker">06 · Technical Architecture</span>
+            <h2>System Architecture &amp; 17-Table Relational Schema</h2>
+            <p class="subtitle">Clean, dependency-light, fast, and resilient full-stack engineering.</p>
+            <div class="grid-2">
+                <div class="box">
+                    <span class="tag">Stack &amp; Security</span>
+                    <h3>Full-Stack Architecture</h3>
+                    <ul>
+                        <li><strong>Frontend:</strong> Semantic HTML5, Custom CSS3 (`app.css` with Dark/Light mode &amp; View Transitions), Vanilla ES6 JS (`app.js`).</li>
+                        <li><strong>Backend:</strong> Modular PHP 8.x (`includes/functions.php`, `includes/category_template.php`, `assistant.php`).</li>
+                        <li><strong>Security Guards:</strong> Server-side role checks (`require_login()`, `require_admin()`), CSRF token verification (`csrf_check()`), SQL escaping (`esc()`), and XSS output encoding (`e()`).</li>
+                        <li><strong>Self-Healing Schema:</strong> `ensure_srs_tables()` and `ensure_upcoming_events()` guarantee zero missing-table errors.</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <span class="tag">MySQL / MariaDB (3NF)</span>
+                    <h3>17 Relational Tables</h3>
+                    <ul>
+                        <li><strong>Core Entities:</strong> `users`, `categories`, `contents`, `character_profiles`, `merchandise_items`, `events`</li>
+                        <li><strong>User Curation:</strong> `bookmarks`, `item_bookmarks`, `personal_notes`, `media_ratings`</li>
+                        <li><strong>Community &amp; Gamification:</strong> `quiz_questions`, `quiz_attempts`, `fandom_polls`, `fandom_poll_votes`, `event_rsvps`</li>
+                        <li><strong>Operations &amp; AI:</strong> `feedback`, `activity_logs`, `chatbot_queries`, `password_resets`</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 7):</strong> Emphasize security and database normalization: every POST form uses CSRF tokens, every admin page enforces server-side role guards, and the database is normalized into 17 tables.
+            </div>
+        </section>
+
+        <!-- SLIDE 8: Live Demo Walkthrough Script -->
+        <section class="slide">
+            <span class="kicker">07 · Live Demonstration Flow</span>
+            <h2>5-Minute Live Demo Script for Evaluators</h2>
+            <p class="subtitle">Click any step below during the presentation to demonstrate the workflow live.</p>
+            <div class="grid-3">
+                <div class="box">
+                    <span class="tag">Step 1 · 60 sec</span>
+                    <h3>Home &amp; 8 Fandom Hubs</h3>
+                    <p>Show the Hero stats, Video Spotlight, 8 Fandom Category pages (`anime.php`), and dark/light theme switcher.</p>
+                    <p style="margin-top:10px"><a class="btn-deck" href="index.php" target="_blank">Open Home &nearr;</a></p>
+                </div>
+                <div class="box">
+                    <span class="tag">Step 2 · 60 sec</span>
+                    <h3>Explorer, Merch &amp; Map</h3>
+                    <p>Filter titles in `explore.php` (with gibberish search guard), browse display-only `merch.php`, and test geolocation on `events-map.php`.</p>
+                    <p style="margin-top:10px"><a class="btn-deck" href="explore.php" target="_blank">Open Explorer &nearr;</a></p>
+                </div>
+                <div class="box">
+                    <span class="tag new">Step 3 · 60 sec</span>
+                    <h3>Trivia XP &amp; Live Polls</h3>
+                    <p>Complete a quick quiz on `quiz.php`, view lore explanations + Leaderboard, and cast a live vote on `polls.php`.</p>
+                    <p style="margin-top:10px"><a class="btn-deck primary" href="quiz.php" target="_blank">Open Trivia &nearr;</a></p>
+                </div>
+                <div class="box">
+                    <span class="tag new">Step 4 · 45 sec</span>
+                    <h3>Event RSVP &amp; .ics Invite</h3>
+                    <p>Open an event (`event.php?id=1`), click "I'm Going", and download the `.ics` calendar file.</p>
+                    <p style="margin-top:10px"><a class="btn-deck" href="event.php?id=1" target="_blank">Open Event &nearr;</a></p>
+                </div>
+                <div class="box">
+                    <span class="tag">Step 5 · 45 sec</span>
+                    <h3>User Dashboard &amp; AI Chat</h3>
+                    <p>Show personalized recommendations, Bookmarks CSV export, and ask the AI Chatbot an Anime question + an off-topic math question.</p>
+                    <p style="margin-top:10px"><a class="btn-deck" href="dashboard.php" target="_blank">Open Dashboard &nearr;</a></p>
+                </div>
+                <div class="box">
+                    <span class="tag new">Step 6 · 30 sec</span>
+                    <h3>Admin Desk &amp; Analytics</h3>
+                    <p>Log in as Admin (`admin@fanhubplus.test` / `Admin@123`), show Moderation Queue, Activity Audit Log, Polls CRUD, and CSV Export.</p>
+                    <p style="margin-top:10px"><a class="btn-deck" href="admin/index.php" target="_blank">Open Admin &nearr;</a></p>
+                </div>
+            </div>
+            <div class="notes-box">
+                <strong>Speaker Note (Slide 8):</strong> Use this slide as your interactive launchpad during the Q&amp;A and live demo! Every button opens the exact module in a new tab.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+            var counter = document.getElementById('slideCounter');
+            var bar = document.getElementById('progressBar');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var notesBtn = document.getElementById('notesBtn');
+            var fsBtn = document.getElementById('fsBtn');
+            var current = 0;
+
+            function showSlide(index) {
+                current = (index + slides.length) % slides.length;
+                slides.forEach(function (s, i) {
+                    s.classList.toggle('active', i === current);
+                });
+                counter.textContent = 'Slide ' + (current + 1) + ' / ' + slides.length;
+                bar.style.width = (((current + 1) / slides.length) * 100) + '%';
+            }
+
+            prevBtn.addEventListener('click', function () { showSlide(current - 1); });
+            nextBtn.addEventListener('click', function () { showSlide(current + 1); });
+            notesBtn.addEventListener('click', function () {
+                document.body.classList.toggle('show-notes');
+            });
+            fsBtn.addEventListener('click', function () {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(function () {});
+                } else {
+                    document.exitFullscreen().catch(function () {});
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    showSlide(current + 1);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    showSlide(current - 1);
+                } else if (e.key === 'n' || e.key === 'N') {
+                    document.body.classList.toggle('show-notes');
+                } else if (e.key === 'f' || e.key === 'F') {
+                    fsBtn.click();
+                }
+            });
+
+            showSlide(0);
+        })();
+    </script>
+</body>
+</html>
