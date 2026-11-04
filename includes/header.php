@@ -125,14 +125,18 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
                 <?php } ?>
             <?php } ?>
             <?php if ($user) { ?>
+                <div class="nav-mobile-divider" aria-hidden="true"></div>
                 <a class="nav-link mobile-only-link<?php echo $current_page === 'dashboard.php' ? ' active' : ''; ?>" href="<?php echo e(site_url('/dashboard.php')); ?>"<?php echo $current_page === 'dashboard.php' ? ' aria-current="page"' : ''; ?>>Account</a>
                 <?php if ($user['role'] === 'admin') { ?>
                     <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/admin/index.php')); ?>">Admin</a>
                 <?php } ?>
                 <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
             <?php } else { ?>
-                <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/login.php' . $auth_next_param)); ?>">Login</a>
-                <a class="nav-cta mobile-only-link" href="<?php echo e(site_url('/register.php' . $auth_next_param)); ?>">Register</a>
+                <div class="nav-mobile-divider" aria-hidden="true"></div>
+                <div class="nav-mobile-auth">
+                    <a class="nav-login-btn mobile-only-link" href="<?php echo e(site_url('/login.php' . $auth_next_param)); ?>">Login</a>
+                    <a class="nav-cta mobile-only-link" href="<?php echo e(site_url('/register.php' . $auth_next_param)); ?>">Register</a>
+                </div>
             <?php } ?>
         </nav>
         <div class="header-tools">
