@@ -256,6 +256,51 @@ function require_admin()
     }
 }
 
+function sanitize_redirect_path($target, $default = '/index.php')
+{
+    if (!is_string($target) || trim($target) === '') {
+        return $default;
+    }
+
+    $target = trim($target);
+
+    if (strpos($target, '//') === 0 || preg_match('~^javascript:~i', $target)) {
+        return $default;
+    }
+
+    if (preg_match('~^https?://~i', $target)) {
+        $parts = parse_url($target);
+        if (!$parts || empty($parts['host'])) {
+            return $default;
+        }
+        $current_host = isset($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '';
+        if ($parts['host'] !== $current_host && $parts['host'] !== 'localhost' && $parts['host'] !== '127.0.0.1') {
+            return $default;
+        }
+        $target = (isset($parts['path']) ? $parts['path'] : '/') . (isset($parts['query']) ? '?' . $parts['query'] : '') . (isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
+    }
+
+    if (strpos($target, '/') !== 0) {
+        $target = '/' . $target;
+    }
+
+    $base_path = site_base_path();
+    if ($base_path !== '' && ($target === $base_path || strpos($target, $base_path . '/') === 0)) {
+        $target = substr($target, strlen($base_path));
+        if ($target === '' || $target === false) {
+            $target = '/index.php';
+        }
+    }
+
+    $path_only = parse_url($target, PHP_URL_PATH);
+    $script_name = basename((string) $path_only);
+    if (in_array($script_name, array('login.php', 'register.php', 'logout.php', 'forgot-password.php', 'reset-password.php'), true)) {
+        return $default;
+    }
+
+    return $target;
+}
+
 function redirect($path)
 {
     header('Location: ' . site_url($path));

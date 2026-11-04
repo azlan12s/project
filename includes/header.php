@@ -23,6 +23,11 @@ $flash = flash_get();
 
 
 $current_page = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'index.php');
+$auth_next_param = '';
+$raw_req_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+if (!in_array($current_page, array('login.php', 'register.php', 'logout.php', 'forgot-password.php', 'reset-password.php'), true) && $raw_req_uri !== '') {
+    $auth_next_param = '?next=' . rawurlencode($raw_req_uri);
+}
 $nav_links = array(
     'index.php' => array(site_url('/index.php'), 'Home'),
     'merch.php' => array(site_url('/merch.php'), 'Merch'),
@@ -58,6 +63,12 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
     <link rel="stylesheet" href="<?php echo e(site_url('/assets/css/app.css?v=' . filemtime(__DIR__ . '/../assets/css/app.css'))); ?>">
     <script>
         document.documentElement.classList.add('js-motion');
+        window.FHP_BASE = <?php echo json_encode(site_base_path()); ?>;
+        window.FHP_URLS = {
+            login: <?php echo json_encode(site_url('/login.php')); ?>,
+            register: <?php echo json_encode(site_url('/register.php')); ?>,
+            checkout: <?php echo json_encode(site_url('/checkout.php')); ?>
+        };
         window.FHP_USER = <?php echo json_encode($user ? array('id' => (int) $user['id'], 'name' => $user['name'], 'email' => $user['email']) : null); ?>;
         window.FHP_CSRF = <?php echo json_encode(csrf_token()); ?>;
         window.addEventListener('pageshow', function(e) {
@@ -120,8 +131,8 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
                 <?php } ?>
                 <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/logout.php')); ?>">Logout</a>
             <?php } else { ?>
-                <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/login.php')); ?>">Login</a>
-                <a class="nav-cta mobile-only-link" href="<?php echo e(site_url('/register.php')); ?>">Register</a>
+                <a class="nav-link mobile-only-link" href="<?php echo e(site_url('/login.php' . $auth_next_param)); ?>">Login</a>
+                <a class="nav-cta mobile-only-link" href="<?php echo e(site_url('/register.php' . $auth_next_param)); ?>">Register</a>
             <?php } ?>
         </nav>
         <div class="header-tools">
@@ -140,8 +151,8 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
                 <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/></svg>
             </button>
             <?php if (!$user) { ?>
-                <a class="nav-login-btn desktop-only-link" href="<?php echo e(site_url('/login.php')); ?>">Login</a>
-                <a class="nav-cta desktop-only-link" href="<?php echo e(site_url('/register.php')); ?>">Register</a>
+                <a class="nav-login-btn desktop-only-link" href="<?php echo e(site_url('/login.php' . $auth_next_param)); ?>">Login</a>
+                <a class="nav-cta desktop-only-link" href="<?php echo e(site_url('/register.php' . $auth_next_param)); ?>">Register</a>
             <?php } else { ?>
                 <a class="nav-link desktop-only-link<?php echo $current_page === 'dashboard.php' ? ' active' : ''; ?>" href="<?php echo e(site_url('/dashboard.php')); ?>"<?php echo $current_page === 'dashboard.php' ? ' aria-current="page"' : ''; ?>>Account</a>
                 <?php if ($user['role'] === 'admin') { ?>

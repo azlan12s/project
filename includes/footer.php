@@ -39,9 +39,17 @@
 
         <nav class="footer-col" aria-label="Account">
             <h4>Account</h4>
+            <?php
+            $auth_next_footer = '';
+            $curr_script_f = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '');
+            $curr_uri_f = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+            if (!in_array($curr_script_f, array('login.php', 'register.php', 'logout.php', 'forgot-password.php', 'reset-password.php'), true) && $curr_uri_f !== '') {
+                $auth_next_footer = '?next=' . rawurlencode($curr_uri_f);
+            }
+            ?>
             <ul>
-                <li><a href="<?php echo e(site_url('/login.php')); ?>">Login</a></li>
-                <li><a href="<?php echo e(site_url('/register.php')); ?>">Register</a></li>
+                <li><a href="<?php echo e(site_url('/login.php' . $auth_next_footer)); ?>">Login</a></li>
+                <li><a href="<?php echo e(site_url('/register.php' . $auth_next_footer)); ?>">Register</a></li>
                 <li><a href="<?php echo e(site_url('/dashboard.php')); ?>">Dashboard</a></li>
                 <li><a href="<?php echo e(site_url('/bookmarks.php')); ?>">Bookmarks</a></li>
             </ul>

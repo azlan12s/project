@@ -220,45 +220,43 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var cart = JSON.parse(localStorage.getItem('fhp_user_cart_v1') || '[]');
-    var hiddenInput = document.getElementById('pageCheckoutItems');
-    var listContainer = document.getElementById('pageCheckoutList');
-    var subtotalEl = document.getElementById('pageSubtotal');
-    var totalEl = document.getElementById('pageTotal');
-    var submitBtn = document.getElementById('pageCheckoutSubmit');
+    document.addEventListener('DOMContentLoaded', function() {
+        var cart = JSON.parse(localStorage.getItem('fhp_user_cart_v1') || '[]');
+        var hiddenInput = document.getElementById('pageCheckoutItems');
+        var listContainer = document.getElementById('pageCheckoutList');
+        var subtotalEl = document.getElementById('pageSubtotal');
+        var totalEl = document.getElementById('pageTotal');
+        var submitBtn = document.getElementById('pageCheckoutSubmit');
 
-    if (!cart || cart.length === 0) {
-        listContainer.innerHTML = '<p class="meta">Your cart is currently empty. <a href="<?php echo e(site_url('/merch.php')); ?>">Browse Merchandise</a></p>';
-        submitBtn.disabled = true;
-        return;
-    }
+        if (!cart || cart.length === 0) {
+            listContainer.innerHTML = '<p class="meta">Your cart is currently empty. <a href="<?php echo e(site_url('/merch.php')); ?>">Browse Merchandise</a></p>';
+            submitBtn.disabled = true;
+            return;
+        }
 
-    hiddenInput.value = JSON.stringify(cart);
-    var subtotal = 0;
-    var html = '';
-    cart.forEach(function(item) {
-        var qty = item.qty || 1;
-        var itemTotal = (parseFloat(item.price) || 0) * qty;
-        subtotal += itemTotal;
-        html += '<div style="display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:8px;">' +
-            '<div style="width:48px; height:48px; border-radius:6px; background:var(--bg-2) url(\'' + (item.image || '') + '\') center/cover; flex:0 0 48px;"></div>' +
-            '<div style="flex:1; min-width:0;">' +
+        hiddenInput.value = JSON.stringify(cart);
+        var subtotal = 0;
+        var html = '';
+        cart.forEach(function(item) {
+            var qty = item.qty || 1;
+            var itemTotal = (parseFloat(item.price) || 0) * qty;
+            subtotal += itemTotal;
+            html += '<div style="display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:8px;">' +
+                '<div style="width:48px; height:48px; border-radius:6px; background:var(--bg-2) url(\'' + (item.image || '') + '\') center/cover; flex:0 0 48px;"></div>' +
+                '<div style="flex:1; min-width:0;">' +
                 '<h4 style="margin:0; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + item.title + '</h4>' +
                 '<small class="meta">Qty: ' + qty + ' &times; $' + item.price + '</small>' +
-            '</div>' +
-            '<strong>$' + itemTotal.toFixed(2) + '</strong>' +
-        '</div>';
-    });
-    listContainer.innerHTML = html;
-    subtotalEl.textContent = '$' + subtotal.toFixed(2);
-    totalEl.textContent = '$' + subtotal.toFixed(2);
+                '</div>' +
+                '<strong>$' + itemTotal.toFixed(2) + '</strong>' +
+                '</div>';
+        });
+        listContainer.innerHTML = html;
+        subtotalEl.textContent = '$' + subtotal.toFixed(2);
+        totalEl.textContent = '$' + subtotal.toFixed(2);
 
-    document.getElementById('pageCheckoutForm').addEventListener('submit', function() {
-        localStorage.removeItem('fhp_user_cart_v1');
+        document.getElementById('pageCheckoutForm').addEventListener('submit', function() {
+            localStorage.removeItem('fhp_user_cart_v1');
+        });
     });
-});
 </script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
-
-

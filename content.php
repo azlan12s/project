@@ -129,7 +129,7 @@ require __DIR__ . '/includes/header.php';
                 <button class="btn" type="submit">Save review</button>
             </form>
         <?php } else { ?>
-            <p><a class="btn" href="<?php echo e(site_url('/login.php')); ?>">Log in to bookmark or review</a></p>
+            <p><a class="btn" href="<?php echo e(site_url('/login.php?next=' . rawurlencode($_SERVER['REQUEST_URI']))); ?>">Log in to bookmark or review</a></p>
         <?php } ?>
     </div>
 </article>

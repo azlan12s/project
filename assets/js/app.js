@@ -1178,12 +1178,19 @@
                     if (window.toast) {
                         window.toast('Please log in or register to complete your order.', 'error');
                     }
+                    var loginUrl = (window.FHP_URLS && window.FHP_URLS.login)
+                        ? window.FHP_URLS.login
+                        : ((window.FHP_BASE && window.FHP_BASE !== '') ? (window.FHP_BASE + '/login.php') : 'login.php');
+                    var registerUrl = (window.FHP_URLS && window.FHP_URLS.register)
+                        ? window.FHP_URLS.register
+                        : ((window.FHP_BASE && window.FHP_BASE !== '') ? (window.FHP_BASE + '/register.php') : 'register.php');
+
                     itemsContainer.innerHTML = '<div class="cart-auth-gate">' +
                         '<h4>Sign in to Checkout</h4>' +
                         '<p>You must be a registered member to place Cash on Delivery merchandise orders.</p>' +
                         '<div class="cart-auth-btns">' +
-                            '<a href="login.php?next=' + encodeURIComponent('checkout.php') + '" class="btn" style="padding:9px 18px;">Log In</a>' +
-                            '<a href="register.php?next=' + encodeURIComponent('checkout.php') + '" class="btn-ghost" style="padding:9px 18px;">Register</a>' +
+                            '<a href="' + loginUrl + '?next=' + encodeURIComponent('checkout.php') + '" class="btn" style="padding:9px 18px;">Log In</a>' +
+                            '<a href="' + registerUrl + '?next=' + encodeURIComponent('checkout.php') + '" class="btn-ghost" style="padding:9px 18px;">Register</a>' +
                         '</div>' +
                         '<button type="button" class="btn-ghost" id="backToCartBtn" style="margin-top:14px;font-size:0.8rem;border:none;cursor:pointer;">&larr; Back to cart items</button>' +
                     '</div>';
@@ -1192,7 +1199,10 @@
                     return;
                 }
 
-                window.location.href = 'checkout.php';
+                var targetCheckoutUrl = (window.FHP_URLS && window.FHP_URLS.checkout)
+                    ? window.FHP_URLS.checkout
+                    : ((window.FHP_BASE && window.FHP_BASE !== '') ? (window.FHP_BASE + '/checkout.php') : 'checkout.php');
+                window.location.href = targetCheckoutUrl;
             });
         }
 

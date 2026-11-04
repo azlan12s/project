@@ -123,7 +123,7 @@ if ($id > 0) {
                         <button class="btn-ghost" type="submit"><?php echo $bookmarked ? 'Remove bookmark' : 'Bookmark Merch'; ?></button>
                     </form>
                 <?php } else { ?>
-                    <p style="margin-top:16px"><a class="btn-ghost" href="<?php echo e(site_url('/login.php')); ?>">Log in to bookmark merch</a></p>
+                    <p style="margin-top:16px"><a class="btn-ghost" href="<?php echo e(site_url('/login.php?next=' . rawurlencode($_SERVER['REQUEST_URI']))); ?>">Log in to bookmark merch</a></p>
                 <?php } ?>
             </div>
         </section>

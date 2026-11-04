@@ -35,22 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title = 'Feedback';
-$hide_navbar = true;
-$hide_footer = true;
 require __DIR__ . '/includes/header.php';
 $feedback_art = is_file(__DIR__ . '/assets/images/johnwick.webp') ? site_url('/assets/images/johnwick.webp') : '';
 ?>
 <section class="auth-split feedback-split" aria-label="Send feedback">
     <div class="auth-panel">
         <div class="auth-box">
-            <a class="auth-brand" href="<?php echo e(site_url('/index.php')); ?>">
-                <img class="auth-brand-mark" src="<?php echo e(site_url('/assets/images/logo1.png')); ?>" alt="">
-                <span class="auth-brand-text">
-                    <b>Fan Hub Plus</b>
-                    <small>Eight fandoms. One hub.</small>
-                </span>
-            </a>
-
             <h1>Send feedback</h1>
             <p class="auth-lede">Report a problem, suggest an improvement, or ask us a question.</p>
 

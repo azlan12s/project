@@ -1302,19 +1302,27 @@ input.is-valid, select.is-valid, textarea.is-valid,
     box-shadow: 0 8px 24px rgba(184, 20, 37, 0.45);
 }
 .btn:active { transform: translateY(0) scale(0.98); }
-.btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--line);
+.btn-ghost,
+.btn.btn-ghost {
+    background: transparent !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line) !important;
     padding: 12px 18px;
     border-radius: 999px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    box-shadow: none !important;
     transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
                 background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent-2); background: rgba(71, 10, 17, 0.08); transform: translateY(-2px); }
+.btn-ghost:hover,
+.btn.btn-ghost:hover {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    background: rgba(184, 20, 37, 0.08) !important;
+    transform: translateY(-2px);
+}
 .btn-danger {
     background: rgba(248, 113, 113, 0.14);
     color: var(--danger);
@@ -1323,6 +1331,20 @@ input.is-valid, select.is-valid, textarea.is-valid,
     border-radius: 999px;
 }
 .btn-danger:hover { background: rgba(248, 113, 113, 0.25); }
+
+.open-cart-btn {
+    border: 1px solid var(--line) !important;
+    background: var(--card) !important;
+    color: var(--text) !important;
+    font-weight: 700 !important;
+    box-shadow: var(--shadow) !important;
+}
+.open-cart-btn:hover {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    background: rgba(184, 20, 37, 0.08) !important;
+    transform: translateY(-2px);
+}
 .hero-panel {
     background: linear-gradient(180deg, var(--card), var(--card-2));
     border: 1px solid var(--line);
@@ -1507,12 +1529,18 @@ a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
 .card-cta:hover span { transform: translateX(3px); }
 
 .card-cta.is-soon {
-    background: transparent;
-    border: 1px dashed var(--line);
-    color: var(--muted);
-    cursor: default;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px dashed var(--line) !important;
+    color: var(--muted) !important;
+    box-shadow: none !important;
+    cursor: default !important;
 }
-.card-cta.is-soon:hover { background: transparent; filter: none; }
+.card-cta.is-soon:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: var(--muted) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
 .card-cta.is-soon:hover span { transform: none; }
 
 .bookmark-note { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
@@ -2280,24 +2308,38 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 12px;
+    padding: 11px 14px;
     border-radius: 12px;
     color: var(--muted);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.92rem;
-    transition: color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+    transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 .admin-sidebar nav a svg { width: 18px; height: 18px; flex-shrink: 0; }
-.admin-sidebar nav a:hover { color: var(--accent-2); transform: translateX(3px); }
+.admin-sidebar nav a:hover {
+    color: #b81425 !important;
+    background: rgba(184, 20, 37, 0.08) !important;
+    transform: translateX(3px);
+}
 .admin-sidebar nav a.active {
-    background: linear-gradient(135deg, rgba(71, 10, 17, 0.4), rgba(244, 244, 245, 0.28));
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(71, 10, 17, 0.25);
+    background: #b81425 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.35);
+    font-weight: 700;
+}
+.admin-sidebar nav a.active svg {
+    color: #ffffff !important;
+    fill: currentColor;
+}
+.admin-sidebar nav a.active:hover {
+    background: #990f1e !important;
+    color: #ffffff !important;
+    transform: translateX(3px);
 }
 .admin-sidebar-foot { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 10px; }
 .admin-sidebar-foot a { color: var(--muted); text-decoration: none; font-size: 0.86rem; padding: 8px; display: block; }
-.admin-sidebar-foot a:hover { color: var(--accent-2); transform: translateX(3px); }
+.admin-sidebar-foot a:hover { color: #b81425 !important; transform: translateX(3px); }
 .admin-account { max-width: 760px; }
 .admin-account .card { margin-top: 20px; }
 .admin-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -2677,16 +2719,18 @@ a.chip.active, .chip.active {
 .merch-card-footer .card-cta.is-soon {
     flex: 1 1 100%;
     width: 100%;
-    cursor: default;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px dashed var(--line);
-    color: var(--muted);
+    cursor: default !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px dashed var(--line) !important;
+    color: var(--muted) !important;
     justify-content: center;
+    box-shadow: none !important;
 }
 .merch-card-footer .card-cta.is-soon:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.03) !important;
     color: var(--muted) !important;
-    transform: none;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .merch-detail-header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
@@ -3037,6 +3081,125 @@ a.chip.active, .chip.active {
 .badge-order-pending { background: #f59e0b !important; color: #111 !important; font-weight: 700; }
 .badge-order-successful { background: #10b981 !important; color: #fff !important; font-weight: 700; }
 .badge-order-cancelled { background: #ef4444 !important; color: #fff !important; font-weight: 700; }
+
+html[data-theme="light"] .admin-sidebar {
+    background: #ffffff !important;
+    border-right: 1px solid #e4e4e7 !important;
+}
+html[data-theme="light"] .admin-sidebar nav a {
+    color: #4b5563 !important;
+}
+html[data-theme="light"] .admin-sidebar nav a:hover:not(.active) {
+    color: #b81425 !important;
+    background: rgba(184, 20, 37, 0.08) !important;
+    transform: translateX(3px);
+}
+html[data-theme="light"] .admin-sidebar nav a.active {
+    background: #b81425 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.3) !important;
+}
+html[data-theme="light"] .admin-sidebar nav a.active svg {
+    color: #ffffff !important;
+    fill: currentColor !important;
+}
+html[data-theme="light"] .admin-sidebar nav a.active:hover {
+    background: #990f1e !important;
+    color: #ffffff !important;
+}
+html[data-theme="light"] .admin-sidebar-foot a:hover {
+    color: #b81425 !important;
+}
+html[data-theme="light"] .admin-topbar {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-bottom: 1px solid #e4e4e7 !important;
+}
+html[data-theme="light"] .btn.btn-ghost,
+html[data-theme="light"] .btn-ghost {
+    color: #18181b !important;
+    border-color: #d4d4d8 !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+html[data-theme="light"] .btn.btn-ghost:hover,
+html[data-theme="light"] .btn-ghost:hover {
+    color: #b81425 !important;
+    border-color: #b81425 !important;
+    background: rgba(184, 20, 37, 0.08) !important;
+}
+html[data-theme="light"] .open-cart-btn {
+    background: #ffffff !important;
+    color: #18181b !important;
+    border: 1px solid #d4d4d8 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+html[data-theme="light"] .open-cart-btn:hover {
+    background: rgba(184, 20, 37, 0.08) !important;
+    border-color: #b81425 !important;
+    color: #b81425 !important;
+}
+html[data-theme="light"] .card-cta.is-soon,
+html[data-theme="light"] .merch-card-footer .card-cta.is-soon {
+    background: #f8fafc !important;
+    border: 1px dashed #cbd5e1 !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+}
+html[data-theme="light"] .card-cta.is-soon:hover,
+html[data-theme="light"] .merch-card-footer .card-cta.is-soon:hover {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+}
+html[data-theme="light"] .btn-danger {
+    color: #dc2626 !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+    background: rgba(220, 38, 38, 0.08) !important;
+}
+html[data-theme="light"] .btn-danger:hover {
+    color: #b91c1c !important;
+    background: rgba(220, 38, 38, 0.16) !important;
+    border-color: #dc2626 !important;
+}
+html[data-theme="light"] .chip {
+    background: #f4f4f5;
+    border-color: #d4d4d8;
+    color: #18181b;
+}
+html[data-theme="light"] a.chip:hover {
+    background: rgba(184, 20, 37, 0.08);
+    border-color: #b81425;
+    color: #b81425;
+}
+html[data-theme="light"] a.chip.active,
+html[data-theme="light"] .chip.active {
+    background: #b81425 !important;
+    border-color: #b81425 !important;
+    color: #ffffff !important;
+}
+html[data-theme="light"] .cart-cod-pill {
+    background: rgba(184, 20, 37, 0.08);
+    border-color: rgba(184, 20, 37, 0.25);
+    color: #b81425;
+}
+html[data-theme="light"] .cart-auth-gate {
+    background: #ffffff;
+    border-color: #e4e4e7;
+}
+html[data-theme="light"] .cart-auth-gate h4 {
+    color: #18181b;
+}
+html[data-theme="light"] .cart-checkout-box {
+    background: #ffffff;
+    border-color: #e4e4e7;
+}
+html[data-theme="light"] .cart-checkout-box h4 {
+    color: #18181b;
+}
+html[data-theme="light"] .merch-card-price {
+    background: #fff;
+    color: #b81425;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
 
 @media (max-width: 520px) {
     .floating-side-cart { right: 14px; bottom: 124px; min-height: 44px; padding: 0 12px; }

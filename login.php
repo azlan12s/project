@@ -4,8 +4,30 @@ if (is_logged_in()) {
     if (is_admin()) {
         redirect('/admin/index.php');
     }
-    redirect('/dashboard.php');
+    $next_param = isset($_GET['next']) ? $_GET['next'] : '';
+    redirect(sanitize_redirect_path($next_param, '/index.php'));
 }
+
+$next_target = '';
+if (!empty($_POST['next'])) {
+    $next_target = $_POST['next'];
+} elseif (!empty($_GET['next'])) {
+    $next_target = $_GET['next'];
+} elseif (!empty($_SERVER['HTTP_REFERER'])) {
+    $ref = $_SERVER['HTTP_REFERER'];
+    $ref_host = parse_url($ref, PHP_URL_HOST);
+    $curr_host = isset($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '';
+    if ($ref_host && ($ref_host === $curr_host || $ref_host === 'localhost' || $ref_host === '127.0.0.1')) {
+        $ref_path = parse_url($ref, PHP_URL_PATH);
+        $ref_query = parse_url($ref, PHP_URL_QUERY);
+        $ref_combined = ($ref_path ?: '/') . ($ref_query ? '?' . $ref_query : '');
+        $ref_file = basename((string) $ref_path);
+        if (!in_array($ref_file, array('login.php', 'register.php', 'logout.php', 'forgot-password.php', 'reset-password.php'), true)) {
+            $next_target = $ref_combined;
+        }
+    }
+}
+$next_target = sanitize_redirect_path($next_target, '');
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,11 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user['role'] === 'admin') {
             redirect('/admin/index.php');
         }
-        $next = isset($_GET['next']) ? $_GET['next'] : '/dashboard.php';
-        if (strpos($next, '/') !== 0 || strpos($next, '//') === 0) {
-            $next = '/dashboard.php';
-        }
-        redirect($next);
+        $dest = $next_target !== '' ? $next_target : '/index.php';
+        redirect(sanitize_redirect_path($dest, '/index.php'));
     } else {
         $error = 'Invalid email or password.';
     }
@@ -54,6 +73,9 @@ $login_art = is_file(__DIR__ . '/assets/images/gojo.jpg') ? site_url('/assets/im
 
             <form method="post" class="auth-form">
                 <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
+                <?php if ($next_target !== '') { ?>
+                    <input type="hidden" name="next" value="<?php echo e($next_target); ?>">
+                <?php } ?>
 
                 <div class="form-row">
                     <label for="email">Email</label>
@@ -74,7 +96,7 @@ $login_art = is_file(__DIR__ . '/assets/images/gojo.jpg') ? site_url('/assets/im
             <div class="auth-divider"><span>or</span></div>
 
             <div class="login-links auth-links">
-                <a class="btn-ghost auth-alt-btn" href="<?php echo e(site_url('/register.php' . (isset($_GET['next']) && $_GET['next'] !== '' ? '?next=' . rawurlencode($_GET['next']) : ''))); ?>">Register / Create account</a>
+                <a class="btn-ghost auth-alt-btn" href="<?php echo e(site_url('/register.php' . ($next_target !== '' ? '?next=' . rawurlencode($next_target) : ''))); ?>">Register / Create account</a>
                 <a class="btn-ghost auth-alt-btn" href="<?php echo e(site_url('/index.php')); ?>">Back to Home</a>
             </div>
             <div class="login-links" style="justify-content:center; margin-top:12px;">
