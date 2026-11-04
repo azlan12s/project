@@ -1,8 +1,6 @@
 <?php
-// $db_host = 'sql207.infinityfree.com';
-// $db_user = 'if0_43031712';
-// $db_pass = '1BQ6LNZkzwGPLm';
-// $db_name = 'if0_43031712_fanhub';
+
+
 $db_host = 'localhost';
 $db_user = 'root';
 $db_pass = '';
@@ -14,3 +12,4 @@ if (!$conn) {
 }
 
 mysqli_set_charset($conn, 'utf8mb4');
+

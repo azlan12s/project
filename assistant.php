@@ -48,12 +48,10 @@ $_SESSION['assistant_requests'] = $recent;
 
 $q = strtolower($message);
 
-/**
- * 1. Check if the query is explicitly off-topic or allowed.
- */
+
 function is_off_topic_query($q)
 {
-    // Pure math expressions (e.g. "2 + 2", "25 * 14")
+
     if (preg_match('/^\s*(what\s+is\s+|calculate\s+|solve\s+)?\d+\s*[\+\-\*\/\%\^]\s*\d+/i', $q)) {
         return true;
     }
@@ -80,18 +78,18 @@ function is_off_topic_query($q)
 function is_in_domain_query($q)
 {
     $domain_keywords = array(
-        // Greetings & meta
+
         'hi', 'hello', 'hey', 'salam', 'assalam', 'aoa', 'who are you', 'what can you do', 'help', 'fan hub', 'fanhub', 'website', 'site',
-        // Site features
+
         'bookmark', 'save', 'register', 'sign up', 'join', 'account', 'login', 'log in', 'password',
         'event', 'meetup', 'convention', 'map', 'character', 'profile', 'merch', 'merchandise', 'shop',
         'article', 'write', 'submit', 'explore', 'category', 'categories', 'fandom', 'multimedia', 'video', 'audio', 'feedback', 'rating', 'review',
         'quiz', 'trivia', 'leaderboard', 'xp', 'rank', 'poll', 'polls', 'vote', 'rsvp', 'calendar',
-        // Core Fandoms: Anime, Cartoon, K-Pop, Manga, Comics, Gaming, Movies, TV, Cosplay
+
         'anime', 'cartoon', 'cartoons', 'animation', 'animated', 'k-pop', 'kpop', 'korean pop', 'idol', 'idols',
         'manga', 'manhwa', 'webtoon', 'comic', 'comics', 'marvel', 'dc', 'superhero',
         'game', 'gaming', 'gamer', 'movie', 'movies', 'film', 'tv show', 'series', 'cosplay', 'costume',
-        // Popular Anime & Manga
+
         'naruto', 'sasuke', 'kakashi', 'itachi', 'uchiha', 'hokage', 'konoha', 'akatsuki', 'boruto',
         'dragon ball', 'goku', 'vegeta', 'gohan', 'frieza', 'broly', 'saiyan', 'shenron', 'piccolo',
         'jujutsu', 'jjk', 'gojo', 'sukuna', 'yuji', 'itadori', 'megumi', 'toji', 'shibuya',
@@ -105,14 +103,14 @@ function is_in_domain_query($q)
         'hunter x hunter', 'gon', 'killua', 'kurapika', 'hisoka', 'fullmetal', 'edward elric',
         'tokyo ghoul', 'kaneki', 'blue lock', 'isagi', 'haikyuu', 'hinata', 'frieren', 'dandadan', 'kaiju',
         'shonen', 'isekai', 'studio ghibli', 'spirited away', 'totoro', 'makoto shinkai', 'your name', 'suzhou', 'mappa', 'ufotable', 'toei',
-        // Popular Cartoons / Animation
+
         'ben 10', 'omnitrix', 'avatar', 'aang', 'korra', 'zuko', 'spongebob', 'patrick', 'squidward',
         'tom and jerry', 'scooby', 'doraemon', 'nobita', 'shinchan', 'pokemon', 'pikachu', 'ash ketchum', 'charizard',
         'rick and morty', 'gravity falls', 'dipper', 'mabel', 'bill cipher', 'adventure time', 'finn', 'jake',
         'teen titans', 'robin', 'starfire', 'raven', 'beast boy', 'cyborg', 'gumball', 'regular show',
         'powerpuff', 'samurai jack', 'courage the cowardly dog', 'dexter', 'johnny bravo', 'looney tunes', 'bugs bunny',
         'simpsons', 'family guy', 'arcane', 'jinx', 'vi', 'spider-verse', 'miles morales', 'pixar', 'disney', 'dreamworks', 'shrek', 'kung fu panda', 'toy story', 'frozen', 'minion', 'nicholas', 'nickelodeon', 'cartoon network',
-        // Popular K-Pop
+
         'bts', 'bangtan', 'jungkook', 'jimin', 'taehyung', 'rm', 'namjoon', 'jin', 'suga', 'yoongi', 'j-hope', 'army',
         'blackpink', 'lisa', 'jennie', 'rose', 'jisoo', 'blink',
         'stray kids', 'skz', 'bang chan', 'felix', 'hyunjin', 'leeknow',
@@ -123,7 +121,7 @@ function is_in_domain_query($q)
         'le sserafim', 'chaewon', 'sakura', 'yunjin', 'kazuha',
         'itzy', 'yeji', 'ryujin', 'txt', 'yeonjun', 'soobin', 'enhypen', 'heeseung', 'ni-ki',
         'ateez', 'g-idle', 'ive', 'wonyoung', 'babymonster', 'bigbang', 'g-dragon', 'psy', 'hybe', 'sm entertainment', 'jyp', 'yg',
-        // Other site fandoms (Comics, Gaming, Movies, TV)
+
         'spider-man', 'batman', 'superman', 'iron man', 'avengers', 'wolverine', 'deadpool', 'x-men', 'joker', 'doctor doom', 'dr doom', 'darth vader', 'star wars', 'dune', 'john wick', 'stranger things', 'wednesday', 'squid game', 'elden ring', 'zelda', 'valorant', 'minecraft', 'gta', 'fortnite', 'genshin', 'league of legends', 'cyberpunk', 'god of war', 'witcher'
     );
 
@@ -139,14 +137,12 @@ if (is_off_topic_query($q)) {
     assistant_reply(UNAVAILABLE_REPLY);
 }
 
-/**
- * 2. Gather matching content & links from the Fan Hub Plus database.
- */
+
 function find_site_matches($q)
 {
     $matches = array();
 
-    // Quick navigation links
+
     $nav_map = array(
         array('patterns' => array('bookmark', 'saved'), 'title' => 'Open Bookmarks', 'href' => '/bookmarks.php', 'label' => 'Member Tool'),
         array('patterns' => array('register', 'sign up', 'join'), 'title' => 'Join Fan Hub Plus', 'href' => '/register.php', 'label' => 'Account'),
@@ -176,7 +172,7 @@ function find_site_matches($q)
         }
     }
 
-    // Search published contents & characters
+
     $stop = array('the', 'and', 'for', 'with', 'from', 'about', 'find', 'show', 'what', 'where', 'which', 'this', 'that', 'are', 'was', 'how', 'can', 'you', 'please', 'tell', 'best', 'top', 'who', 'mujhe', 'kya', 'hai', 'hain', 'ka', 'ki', 'ke', 'mein', 'batao');
     $words = preg_split('/[^\p{L}\p{N}]+/u', $q, -1, PREG_SPLIT_NO_EMPTY);
     $terms = array();
@@ -203,7 +199,7 @@ function find_site_matches($q)
             );
         }
 
-        // Also search characters
+
         $char_or = array();
         foreach ($terms as $term) {
             $needle = "LIKE '%" . esc($term) . "%'";
@@ -219,7 +215,7 @@ function find_site_matches($q)
         }
     }
 
-    // Deduplicate by href
+
     $unique = array();
     $seen = array();
     foreach ($matches as $m) {
@@ -231,9 +227,7 @@ function find_site_matches($q)
     return array_slice($unique, 0, 4);
 }
 
-/**
- * 3. Build site context summary for the AI model.
- */
+
 function build_site_context()
 {
     $titles = db_all("SELECT contents.title, categories.name AS cat, contents.type, contents.genre FROM contents JOIN categories ON categories.id = contents.category_id WHERE contents.status = 'published' ORDER BY contents.popularity_score DESC LIMIT 12");
@@ -262,9 +256,7 @@ function build_site_context()
         . "- Upcoming Events: " . implode('; ', $e_list) . ".";
 }
 
-/**
- * 4. Call External AI API (Gemini / Groq / OpenAI / Pollinations OpenAI endpoint).
- */
+
 function call_ai_provider($user_message, $site_context, $ai_config)
 {
     $system_prompt = "You are the official AI Chatbot for 'Fan Hub Plus', a fandom website dedicated to Anime, Cartoons (animated shows), K-Pop, Manga, Comics, Gaming, Movies, TV Shows, and Cosplay.\n\n"
@@ -278,7 +270,7 @@ function call_ai_provider($user_message, $site_context, $ai_config)
         . "3. Keep your response concise (2 to 4 sentences), engaging, and helpful. Match the user's language (English or Roman Urdu/Hindi).\n\n"
         . $site_context;
 
-    // A) Google Gemini API
+
     if (!empty($ai_config['gemini_api_key']) && function_exists('curl_init')) {
         $model = !empty($ai_config['gemini_model']) ? $ai_config['gemini_model'] : 'gemini-2.5-flash';
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent?key=' . rawurlencode($ai_config['gemini_api_key']);
@@ -300,7 +292,7 @@ function call_ai_provider($user_message, $site_context, $ai_config)
         }
     }
 
-    // B) Groq API
+
     if (!empty($ai_config['groq_api_key']) && function_exists('curl_init')) {
         $url = 'https://api.groq.com/openai/v1/chat/completions';
         $payload = array(
@@ -318,7 +310,7 @@ function call_ai_provider($user_message, $site_context, $ai_config)
         }
     }
 
-    // C) OpenAI API
+
     if (!empty($ai_config['openai_api_key']) && function_exists('curl_init')) {
         $url = 'https://api.openai.com/v1/chat/completions';
         $payload = array(
@@ -336,7 +328,7 @@ function call_ai_provider($user_message, $site_context, $ai_config)
         }
     }
 
-    // D) Built-in Keyless OpenAI-compatible AI endpoint (Pollinations AI)
+
     if (!empty($ai_config['free_ai_enabled']) && function_exists('curl_init')) {
         $url = 'https://text.pollinations.ai/openai';
         $payload = array(
@@ -379,9 +371,7 @@ function http_json_post($url, $payload, $extra_headers = array(), $timeout = 10)
     return is_array($decoded) ? $decoded : null;
 }
 
-/**
- * 5. Built-in Fandom Knowledge Engine fallback (when offline or API unreachable).
- */
+
 function local_fandom_fallback($q, $matches)
 {
     if (!is_in_domain_query($q) && empty($matches)) {
@@ -392,7 +382,7 @@ function local_fandom_fallback($q, $matches)
         return 'Hello! I am the Fan Hub Plus AI Assistant. Ask me anything about Anime, Cartoons, K-Pop, or our website\'s characters, articles, events, and merch!';
     }
 
-    // Check spotlight data for matching franchise
+
     $spotlights = spotlight_data();
     foreach ($spotlights as $cat_slug => $entries) {
         foreach ($entries as $entry) {
@@ -406,7 +396,7 @@ function local_fandom_fallback($q, $matches)
         }
     }
 
-    // Specific knowledge answers for Anime, Cartoons, and K-Pop
+
     if (strpos($q, 'gojo') !== false || strpos($q, 'jujutsu') !== false || strpos($q, 'jjk') !== false) {
         return 'Satoru Gojo is the strongest jujutsu sorcerer in Jujutsu Kaisen, wielding both the Six Eyes and the Limitless cursed technique (including Infinity and Domain Expansion: Unlimited Void). Explore our Anime section for Jujutsu Kaisen spotlights and character profiles!';
     }
@@ -454,12 +444,12 @@ if ($ai_answer === null || $ai_answer === '') {
     $ai_answer = local_fandom_fallback($q, $matches);
 }
 
-// If the AI determined the question is off-topic ("It is not available for me"), do not attach random links
+
 if (stripos($ai_answer, 'not available for me') !== false) {
     $matches = array();
 }
 
-// Log chatbot interaction in DB for SRS Admin Analytics
+
 try {
     ensure_srs_tables();
     $u = current_user();
@@ -468,7 +458,8 @@ try {
     $a_esc = esc($ai_answer);
     db_query("INSERT INTO chatbot_queries (user_id, message, response, created_at) VALUES ($uid_sql, '$q_esc', '$a_esc', NOW())");
 } catch (\Throwable $e) {
-    // Never let analytics logging interrupt the chatbot JSON reply
+
 }
 
 assistant_reply($ai_answer, $matches);
+

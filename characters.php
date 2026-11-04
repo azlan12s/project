@@ -13,8 +13,7 @@ $items = db_all("SELECT character_profiles.*, categories.name AS category_name, 
 $page_title = 'Characters';
 require __DIR__ . '/includes/header.php';
 ?>
-<style>
-.character-card .cover {
+<style>.character-card .cover {
     height: 300px;
     max-height: 320px;
     aspect-ratio: 3 / 4;
@@ -58,3 +57,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

@@ -15,23 +15,23 @@ $token_row = $token !== '' ? db_one("SELECT * FROM password_resets WHERE token =
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
 
-    // 1. Request Password Reset Link
+
     if (isset($_POST['email'])) {
         $email = strtolower(trim($_POST['email']));
         $email_sql = esc($email);
         $user = filter_var($email, FILTER_VALIDATE_EMAIL) ? db_one("SELECT id, name, email FROM users WHERE email = '$email_sql' LIMIT 1") : null;
 
         if ($user) {
-            // Delete old tokens for this email to keep it clean
+
             db_query("DELETE FROM password_resets WHERE email = '$email_sql'");
 
-            // Generate secure 64-character token
+
             $new_token = bin2hex(random_bytes(32));
             $new_token_sql = esc($new_token);
             $stored = db_query("INSERT INTO password_resets (email, token, created_at) VALUES ('$email_sql', '$new_token_sql', NOW())");
 
             if ($stored) {
-                // Determine base URL
+
                 $base_url = !empty($mail_config['base_url']) ? rtrim($mail_config['base_url'], '/') : '';
                 if (empty($base_url)) {
                     $scheme = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $subject = 'Reset Your Password - Fan Hub Plus';
 
-                // Professional HTML email template
+
                 $html = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:24px;font-family:\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;background-color:#121316;color:#f4f4f5;">'
                     . '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;margin:0 auto;background:#1c1d22;border:1px solid #2d2e36;border-radius:14px;overflow:hidden;">'
                     . '<tr><td style="padding:28px 32px;background:linear-gradient(135deg,#470a11,#1c1d22);border-bottom:1px solid #2d2e36;">'
@@ -67,13 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     . '</p></div>'
                     . '</td></tr></table></body></html>';
 
-                $text = "Hello " . $user['name'] . ",\n\n"
+                $text = 'Hello ' . $user['name'] . ",\n\n"
                     . "We received a request to reset your password for your Fan Hub Plus account.\n"
                     . "Click this tokenized link to choose a new password (valid for 1 hour):\n\n"
                     . $link . "\n\n"
                     . "If you did not request this, you can safely ignore this email.\n";
 
-                // Dispatch via Gmail SMTP
+
                 $send_result = send_gmail_smtp($email, $subject, $html, $text, $mail_config);
 
                 if ($send_result['ok']) {
@@ -93,11 +93,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Could not generate reset token. Please try again.';
             }
         } else {
-            // Generic security response so user existence cannot be enumerated
+
             $message = 'If an account exists for that email, a password reset link has been sent.';
         }
     }
-    // 2. Process New Password Submission
+
     elseif (isset($_POST['new_password'], $_POST['token'])) {
         $posted_token = trim($_POST['token']);
         $posted_token_sql = esc($posted_token);
@@ -155,7 +155,7 @@ require __DIR__ . '/includes/header.php';
         <?php } ?>
 
         <?php if ($token_row) { ?>
-            <!-- Set New Password Form -->
+
             <form method="post" id="resetPasswordForm">
                 <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
                 <input type="hidden" name="token" value="<?php echo e($token_row['token']); ?>">
@@ -173,7 +173,7 @@ require __DIR__ . '/includes/header.php';
                 <button class="btn btn-primary" type="submit" style="width:100%; padding:12px; font-weight:700; margin-top:10px;">Update Password &amp; Log In</button>
             </form>
         <?php } else { ?>
-            <!-- Request Reset Link Form -->
+
             <form method="post" id="forgotPasswordForm">
                 <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
 
@@ -194,3 +194,4 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

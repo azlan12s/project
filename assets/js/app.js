@@ -1,5 +1,3 @@
-/* Fan Hub Plus — front-end runtime
-   Sections: navigation, theme, scroll UX, carousel, toasts. */
 (function () {
     'use strict';
 
@@ -17,9 +15,6 @@
         var nav = document.getElementById('site-nav');
         if (!toggle || !nav) { return; }
 
-        /* The Categories flyout is opened and closed by CSS :focus-within, so
-           aria-expanded has to be mirrored here or assistive tech will be told
-           the menu is collapsed while it is visibly open. */
         nav.querySelectorAll('.nav-drop').forEach(function (drop) {
             var btn = drop.querySelector('.nav-drop-btn');
             if (!btn) { return; }
@@ -126,8 +121,6 @@
             document.cookie = 'fhp_session_theme=' + next + ';path=/;samesite=lax';
             announce(next === 'dark' ? 'Dark theme enabled' : 'Light theme enabled');
 
-            /* The attribute must change INSIDE the callback, otherwise the
-               "old" snapshot is captured after the swap and nothing animates. */
             if (document.startViewTransition && !reduceMotion) {
                 document.startViewTransition(function () {
                     root.setAttribute('data-theme', next);
@@ -182,7 +175,6 @@
         update();
     }
 
-    /* Every block-level unit of content across the public and admin pages. */
     var REVEAL_SELECTOR = [
         '.section-head', '.card', '.cat-card', '.stat', '.hero-stats > div',
         '.detail-hero > *', '.video-carousel', '.auth-card',
@@ -207,16 +199,13 @@
 
         var observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                /* Reveal on scroll-in, or when the viewport has already jumped
-                   past the element (deep link / restored scroll position). */
+
                 if (!entry.isIntersecting && entry.boundingClientRect.top >= 0) { return; }
                 entry.target.classList.add('is-revealed');
                 observer.unobserve(entry.target);
             });
         }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
 
-        /* Group by parent so a row of cards cascades left-to-right
-           instead of every card popping in on the same frame. */
         var perParent = new Map();
         targets.forEach(function (node) {
             var parent = node.parentElement;
@@ -227,8 +216,7 @@
 
         perParent.forEach(function (list) {
             list.forEach(function (node, index) {
-                /* Already on screen: show it right away, otherwise the hero
-                   would visibly flicker on first paint. */
+
                 if (node.getBoundingClientRect().top < window.innerHeight) {
                     node.classList.add('is-revealed');
                     return;
@@ -328,8 +316,7 @@
             var timer = null;
             var delay = parseInt(root.getAttribute('data-autoplay'), 10) || 6500;
             if (slides.length < 2) {
-                /* One clip is not a carousel. Hide the controls so the tile
-                   reads as a plain video with its caption. */
+
                 if (prevBtn) { prevBtn.hidden = true; }
                 if (nextBtn) { nextBtn.hidden = true; }
                 var dotWrap = root.querySelector('.sg-dots');
@@ -337,9 +324,6 @@
                 return;
             }
 
-            /* Paint a slide's image only while it is the visible one. With five
-               carousels on a category page this is the difference between five
-               image requests and twenty. */
             function paint(slide) {
                 var src = slide.getAttribute('data-image');
                 if (!src) { return; }
@@ -348,10 +332,6 @@
                 slide.setAttribute('data-painted', '1');
             }
 
-            /* Same lazy deal for the clips: the src is only attached to the
-               visible slide, and every other slide is paused. A slide whose
-               clip fails to load keeps its poster, so a bad file degrades to
-               the still instead of an empty box. */
             function syncVideos() {
                 Array.prototype.forEach.call(videos, function (video) {
                     if (!video.parentNode.classList.contains('is-active') || reduce || document.hidden) {
@@ -387,8 +367,7 @@
 
             function resetTimer() {
                 if (timer) { window.clearInterval(timer); }
-                // No autoplay under reduced motion: the visitor drives the
-                // carousel with the arrows, dots, or keyboard.
+
                 if (reduce) { return; }
                 timer = window.setInterval(function () { goTo(current + 1); }, delay);
             }
@@ -399,8 +378,6 @@
                 dot.addEventListener('click', function () { goTo(parseInt(dot.getAttribute('data-index'), 10)); });
             });
 
-            /* Pause while the pointer is over it or something inside it has
-               focus, so somebody reading a caption is not yanked away. */
             root.addEventListener('mouseenter', function () { if (timer) { window.clearInterval(timer); } });
             root.addEventListener('mouseleave', resetTimer);
             root.addEventListener('focusin', function () { if (timer) { window.clearInterval(timer); } });
@@ -410,8 +387,6 @@
                 if (event.key === 'ArrowRight') { goTo(current + 1); }
             });
 
-            /* Stop the timer once the carousel scrolls out of view, and let go
-               of the clip playing inside it. */
             if ('IntersectionObserver' in window && !reduce) {
                 new IntersectionObserver(function (entries) {
                     Array.prototype.forEach.call(entries, function (entry) {
@@ -492,8 +467,7 @@
 
         function resetTimer() {
             if (timer) { window.clearInterval(timer); }
-            // No autoplay under reduced motion: the visitor drives the slider
-            // with the arrows, dots, or keyboard.
+
             if (reduce) { return; }
             timer = window.setInterval(function () { goTo(current + 1); }, delay);
         }
@@ -504,8 +478,6 @@
             dot.addEventListener('click', function () { goTo(parseInt(dot.getAttribute('data-index'), 10)); });
         });
 
-        /* Pause while the pointer is over the band or something inside it has
-           focus, so a visitor reading a caption is not yanked away. */
         root.addEventListener('mouseenter', function () { if (timer) { window.clearInterval(timer); } });
         root.addEventListener('mouseleave', function () { resetTimer(); });
         root.addEventListener('focusin', function () { if (timer) { window.clearInterval(timer); } });
@@ -514,7 +486,7 @@
             if (event.key === 'ArrowLeft') { goTo(current - 1); }
             if (event.key === 'ArrowRight') { goTo(current + 1); }
         });
-        /* Pause slide rotation when the carousel is offscreen. */
+
         if ('IntersectionObserver' in window && !reduce) {
             new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
@@ -530,7 +502,6 @@
             resetTimer();
         }
     }
-
 
     function initAdminSidebar() {
         var toggle = document.getElementById('sidebarToggle');
@@ -647,7 +618,6 @@
             return bubble;
         }
 
-        // Restore persisted session chat history if present
         try {
             var saved = JSON.parse(sessionStorage.getItem(storageKey) || '[]');
             if (Array.isArray(saved) && saved.length > 0) {
@@ -807,7 +777,6 @@
             var type = (field.type || '').toLowerCase();
             var id = (field.id || '').toLowerCase();
 
-            // Check required
             if (field.required && !val) {
                 if (type === 'email' || name === 'email') {
                     return { valid: false, message: 'Email address is required.' };
@@ -824,12 +793,10 @@
                 return { valid: false, message: (field.title || 'This field is required.') };
             }
 
-            // If empty and not required, clear error and pass
             if (!val && !field.required) {
                 return { valid: true, optionalEmpty: true };
             }
 
-            // HTML5 pattern attribute check
             if (field.pattern) {
                 try {
                     var customReg = new RegExp('^(?:' + field.pattern + ')$');
@@ -839,14 +806,12 @@
                 } catch (e) {}
             }
 
-            // Email validation
             if (type === 'email' || name === 'email') {
                 if (!EMAIL_REGEX.test(val)) {
                     return { valid: false, message: 'Please enter a valid email address (e.g. name@example.com).' };
                 }
             }
 
-            // Password validation
             if (name === 'password' || name === 'new_password') {
                 var isRegistrationOrNew = (name === 'new_password') ||
                     (window.location.pathname.indexOf('register.php') !== -1) ||
@@ -862,7 +827,6 @@
                 }
             }
 
-            // Password confirmation
             if (name === 'confirm_password') {
                 var newPwd = form ? form.querySelector('[name="new_password"], [name="password"]') : null;
                 if (newPwd && val !== newPwd.value) {
@@ -870,28 +834,24 @@
                 }
             }
 
-            // Name validation
             if (name === 'name' || id === 'admin-name') {
                 if (!NAME_REGEX.test(val)) {
                     return { valid: false, message: 'Name must be 2-60 characters and contain only letters, dots, hyphens, and spaces.' };
                 }
             }
 
-            // Slug validation
             if (name === 'slug') {
                 if (!SLUG_REGEX.test(val)) {
                     return { valid: false, message: 'Slug must be lowercase alphanumeric with hyphens (e.g. my-category).' };
                 }
             }
 
-            // Title validation
             if (name === 'title' || id === 'article-title') {
                 if (val.length < 3) {
                     return { valid: false, message: 'Title must be at least 3 characters long.' };
                 }
             }
 
-            // Textarea / Message / Description / Body validation
             if (field.tagName === 'TEXTAREA' || name === 'message' || name === 'body') {
                 var minL = parseInt(field.getAttribute('minlength') || (field.required ? '10' : '0'), 10);
                 if (minL > 0 && val.length < minL) {
@@ -899,28 +859,24 @@
                 }
             }
 
-            // URL validation
             if (type === 'url' || name.indexOf('url') !== -1 || name === 'trailer') {
                 if (!URL_REGEX.test(val)) {
                     return { valid: false, message: 'Please enter a valid URL starting with http:// or https://' };
                 }
             }
 
-            // Year validation
             if (name === 'release_year' || name === 'year') {
                 if (!YEAR_REGEX.test(val)) {
                     return { valid: false, message: 'Please enter a valid 4-digit year (1900-2099).' };
                 }
             }
 
-            // Price validation
             if (name === 'price') {
                 if (!PRICE_REGEX.test(val)) {
                     return { valid: false, message: 'Please enter a valid price (e.g. 19.99).' };
                 }
             }
 
-            // General minlength
             if (field.minLength && field.minLength > 0 && val.length < field.minLength) {
                 return { valid: false, message: 'Must be at least ' + field.minLength + ' characters.' };
             }
@@ -934,7 +890,6 @@
                 return;
             }
 
-            // Disable default browser validation bubble to use custom messages and red borders
             form.setAttribute('novalidate', 'true');
 
             var inputs = form.querySelectorAll('input, select, textarea');
@@ -1237,12 +1192,10 @@
                     return;
                 }
 
-                // User is authenticated: proceed to Cash on Delivery checkout
                 window.location.href = 'checkout.php';
             });
         }
 
-        // Delegate Add to Cart buttons
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('.merch-add-btn');
             if (btn) {
@@ -1258,7 +1211,6 @@
             }
         });
 
-        // Detail page quantity and add to cart
         var detailAddBtn = document.getElementById('detailAddToCart');
         var detailQtyInput = document.getElementById('detailQty');
         var qtyMinus = document.getElementById('qtyMinus');

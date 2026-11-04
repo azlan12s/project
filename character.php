@@ -32,16 +32,15 @@ if ($ch['related_content_ids'] !== '') {
     }
     $idlist = implode(',', $ids);
     if ($idlist !== '') {
-          /* The card renderer shows a type badge, a description preview and a
-             genre line, so the query has to bring those columns along. */
+
+
           $related = db_all("SELECT contents.id, contents.title, contents.thumbnail, contents.body, contents.type, contents.genre, categories.slug AS category_slug FROM contents JOIN categories ON categories.id = contents.category_id WHERE contents.id IN ($idlist) AND contents.status = 'published'");
     }
 }
 $page_title = $ch['name'];
 require __DIR__ . '/includes/header.php';
 ?>
-<style>
-.character-hero {
+<style>.character-hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
@@ -183,3 +182,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

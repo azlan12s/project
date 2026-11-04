@@ -4,7 +4,7 @@ ensure_srs_tables();
 
 $user = current_user();
 
-// Handle AJAX or POST order placement
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
         || (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false)
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/checkout.php');
     }
 
-    // Filter out any upcoming items from checkout
+
     $valid_items = array();
     $total = 0.00;
     foreach ($items as $it) {
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($m_row) {
                 $tag = isset($m_row['tag']) ? $m_row['tag'] : '';
                 if (stripos($tag, 'Pre-Order') !== false || stripos($tag, 'Limited') !== false || stripos($tag, 'Upcoming') !== false) {
-                    continue; // Upcoming showcase drop
+                    continue;
                 }
             }
         }
@@ -103,9 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notes_sql = esc($notes);
     $total_sql = (float) $total;
 
-    $order_inserted = db_query("INSERT INTO merch_orders 
-        (user_id, order_number, total_amount, payment_method, status, shipping_name, shipping_phone, shipping_address, shipping_city, order_notes, created_at, updated_at) 
-        VALUES 
+    $order_inserted = db_query("INSERT INTO merch_orders
+        (user_id, order_number, total_amount, payment_method, status, shipping_name, shipping_phone, shipping_address, shipping_city, order_notes, created_at, updated_at)
+        VALUES
         ($uid, '$order_num', $total_sql, 'Cash on Delivery', 'pending', '$name_sql', '$phone_sql', '$address_sql', '$city_sql', '$notes_sql', NOW(), NOW())");
 
     if ($order_inserted) {
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $m_qty = max(1, (int) (isset($it['qty']) ? $it['qty'] : 1));
             $m_img = esc(isset($it['image']) ? $it['image'] : '');
 
-            db_query("INSERT INTO merch_order_items (order_id, merch_id, title, price, quantity, image) 
+            db_query("INSERT INTO merch_order_items (order_id, merch_id, title, price, quantity, image)
                 VALUES ($order_id, $m_id, '$m_title', $m_price, $m_qty, '$m_img')");
         }
 
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// GET view: Checkout Page
+
 if (!$user) {
     flash_set('error', 'Please log in or create an account to checkout.');
     redirect('/login.php?next=' . rawurlencode('/checkout.php'));
@@ -260,4 +260,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+
 

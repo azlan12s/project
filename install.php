@@ -44,3 +44,4 @@ echo '<p>Imported schema.sql into <strong>fan_hub_plus</strong> using simple mys
 echo '<p>Demo account credentials are listed in docs/README.docx.</p>';
 echo '<p><a href="' . e(site_url('/index.php')) . '" style="color:#7dd3fc">Open homepage</a></p>';
 echo '</body></html>';
+

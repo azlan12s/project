@@ -47,3 +47,4 @@ window.addEventListener("resize",function(){map.invalidateSize();});
 </script>';
 require __DIR__ . '/includes/footer.php';
 ?>
+

@@ -98,7 +98,7 @@ $slides = hero_slides();
     </div>
 </section>
 
-<!-- Fandom carousel. Sits between the category grid and Featured & popular. -->
+
 <section class="fan-slider-section" aria-label="Featured fandoms">
     <div class="wrap section-head">
         <h2>Spotlight fandoms</h2>
@@ -285,3 +285,4 @@ $slides = hero_slides();
     </div>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

@@ -8,7 +8,7 @@ if (!$ev) {
     redirect('/events.php');
 }
 
-// iCalendar (.ics) Export for Google / Outlook / Apple Calendar
+
 if (isset($_GET['ical']) && $_GET['ical'] === '1') {
     $dt_start = str_replace('-', '', $ev['event_date']) . 'T180000Z';
     $dt_end   = str_replace('-', '', $ev['event_date']) . 'T210000Z';
@@ -108,3 +108,4 @@ require __DIR__ . '/includes/header.php';
 $extra_js = '<script>var map=L.map("map").setView([' . $ev['latitude'] . ',' . $ev['longitude'] . '], 11);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);L.marker([' . $ev['latitude'] . ',' . $ev['longitude'] . ']).addTo(map).bindPopup(' . json_encode($ev['title']) . ');</script>';
 require __DIR__ . '/includes/footer.php';
 ?>
+

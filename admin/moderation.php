@@ -38,3 +38,4 @@ require __DIR__ . '/../includes/admin_header.php';
         <?php } ?>
         <?php if (!$pending) { ?><p class="meta">Queue is empty.</p><?php } ?>
 <?php require __DIR__ . '/../includes/admin_footer.php'; ?>
+

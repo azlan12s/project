@@ -99,7 +99,7 @@ require __DIR__ . '/includes/header.php';
             <a href="<?php echo e(site_url('/dashboard.php')); ?>" class="btn-ghost" style="font-size:0.85rem; padding:8px 16px;">&larr; Back to Dashboard</a>
         </div>
 
-        <!-- 1. Stretched Profile Editor Form Card -->
+
         <div class="card card-body" style="width:100%; border:1px solid var(--line); border-radius:16px; padding:28px; margin-bottom:28px;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px; border-bottom:1px solid var(--line); padding-bottom:14px;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px; height:22px; color:var(--accent-2);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -115,7 +115,7 @@ require __DIR__ . '/includes/header.php';
                 <input type="hidden" name="csrf" value="<?php echo e(csrf_token()); ?>">
                 <input type="hidden" name="form_action" value="update_profile">
 
-                <!-- Avatar Section -->
+
                 <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; padding:16px; background:var(--bg-2); border:1px solid var(--line); border-radius:12px;">
                     <div style="position:relative; flex-shrink:0;">
                         <?php if ($user['avatar'] !== '') { ?>
@@ -133,7 +133,7 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 </div>
 
-                <!-- Name & Email (2-Column Grid) -->
+
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; width:100%;">
                     <div class="form-row">
                         <label for="profile_name" style="font-weight:700; margin-bottom:6px; display:block;">Display Name</label>
@@ -145,7 +145,7 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 </div>
 
-                <!-- Theme & Font Size (2-Column Grid) -->
+
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; width:100%;">
                     <div class="form-row">
                         <label for="profile_theme" style="font-weight:700; margin-bottom:6px; display:block;">Interface Theme</label>
@@ -164,11 +164,11 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 </div>
 
-                <!-- Favorite Categories -->
+
                 <div class="form-row" style="width:100%;">
                     <label style="font-weight:700; margin-bottom:8px; display:block;">Favorite Fandom Categories</label>
                     <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; width:100%;">
-                        <?php foreach ($cats as $c) { 
+                        <?php foreach ($cats as $c) {
                             $is_checked = in_array($c['slug'], $selected, true);
                         ?>
                             <label style="display:flex; align-items:center; gap:8px; padding:9px 12px; background:var(--bg-2); border:1px solid var(--line); border-radius:10px; cursor:pointer; font-size:0.88rem; font-weight:600;">
@@ -185,7 +185,7 @@ require __DIR__ . '/includes/header.php';
             </form>
         </div>
 
-        <!-- 2. Stretched Change Password Form Card -->
+
         <div class="card card-body" style="width:100%; border:1px solid var(--line); border-radius:16px; padding:28px;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px; border-bottom:1px solid var(--line); padding-bottom:14px;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px; height:22px; color:var(--accent-2);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -246,3 +246,4 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

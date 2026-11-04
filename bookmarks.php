@@ -143,3 +143,4 @@ require __DIR__ . '/includes/header.php';
     <?php if (!$merch_bookmarks) { ?><p class="meta">No merchandise items bookmarked yet. Browse <a href="<?php echo e(site_url('/merch.php')); ?>">Merchandise</a> to bookmark items.</p><?php } ?>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/includes/functions.php';
 
-// Insert a new video content: Attack on Titan Final Arc Trailer Yesterday
+
 $title = "Attack on Titan Final Arc Trailer Yesterday";
-$thumbnail = "uploads/articles/attack_on_titan_thumb.jpg"; // placeholder, ensure file exists or use existing image
+$thumbnail = "uploads/articles/attack_on_titan_thumb.jpg";
 $body = "Official trailer for the final arc of Attack on Titan. Experience the epic conclusion of the series.";
 $type = "video";
 $genre = "Trailer";
-$category_id = 1; // Anime category
-$media_url = "https://www.youtube.com/watch?v=example123"; // replace with actual YouTube URL
+$category_id = 1;
+$media_url = "https://www.youtube.com/watch?v=example123";
 $status = "published";
 $release_year = date('Y');
 $views = 0;

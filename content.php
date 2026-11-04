@@ -59,8 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user) {
 $page_title = $item['title'];
 require __DIR__ . '/includes/header.php';
 ?>
-<style>
-.detail-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; padding: 28px 0; align-items: start; }
+<style>.detail-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; padding: 28px 0; align-items: start; }
 .detail-media { border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--line); align-self: start; }
 .detail-media iframe, .detail-media video { width: 100%; aspect-ratio: 16 / 9; display: block; border: 0; min-height: 0; }
 .detail-media img, .detail-media .cover { width: 100%; height: 460px; max-height: 65vh; object-fit: cover; object-position: top center; background-size: cover; background-position: center; display: block; }
@@ -96,14 +95,13 @@ require __DIR__ . '/includes/header.php';
         <h1><?php echo e($item['title']); ?></h1>
         <p class="meta"><?php echo e($item['genre']); ?> · <?php echo (int) $item['release_year']; ?> · <?php echo (int) $item['views']; ?> views · popularity <?php echo (int) $item['popularity_score']; ?></p>
         <p class="stars">Average <?php echo e($rating_info['avg']); ?> / 5 (<?php echo (int) $rating_info['total']; ?> reviews)</p>
-        <style>
-        .detail-body {
+        <style>.detail-body {
             display: -webkit-box;
             -webkit-line-clamp: 6;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-    </style>
+</style>
     <p class="detail-body"><?php echo nl2br(e($item['body'])); ?></p>
         <p class="detail-body-extra">This content provides additional insight and background, enriching the viewer's experience and offering deeper context about the subject.</p>
         <?php render_share_bar($item['title']); ?>
@@ -175,3 +173,4 @@ if ($similar_items) {
 </section>
 <?php } ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

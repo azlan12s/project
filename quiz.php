@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
 $fan_profile = $user ? user_fan_profile((int) $user['id']) : null;
 
-// Community Leaderboard (Top Fans by Quiz & Platform XP)
+
 $all_users = db_all("SELECT id, name, role, favorite_categories FROM users ORDER BY id ASC LIMIT 20");
 $leaderboard = array();
 foreach ($all_users as $u) {
@@ -223,3 +223,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

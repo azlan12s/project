@@ -84,14 +84,14 @@ if ($id > 0) {
                     <span class="merch-rating-pill">★ <?php echo e($info['rating']); ?> / 5.0 (<?php echo e($info['reviews']); ?> reviews)</span>
                 </div>
                 <h1 style="margin-top:6px;"><?php echo e($item['title']); ?></h1>
-                
+
                 <div class="merch-price-box">
                     <span class="merch-price-val">$<?php echo e($info['price']); ?></span>
                     <span class="merch-stock-badge"><span class="merch-stock-dot"></span><?php echo e($info['stock']); ?></span>
                 </div>
 
                 <p style="line-height:1.6;color:var(--text);"><?php echo nl2br(e($item['description'])); ?></p>
-                
+
                 <div class="merch-specs-grid">
                     <div class="spec-item"><span class="spec-label">SKU ID</span><strong><?php echo e($info['sku']); ?></strong></div>
                     <div class="spec-item"><span class="spec-label">Material</span><strong><?php echo e($info['material']); ?></strong></div>
@@ -159,7 +159,7 @@ require __DIR__ . '/includes/header.php';
             </button>
         </div>
     </div>
-    
+
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px">
         <a class="chip <?php echo $cat === '' ? 'active' : ''; ?>" href="<?php echo e(site_url('/merch.php')); ?>">All Fandoms</a>
         <?php foreach ($cats as $c) { ?>
@@ -264,3 +264,4 @@ require __DIR__ . '/includes/header.php';
 </section>
 <?php } ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

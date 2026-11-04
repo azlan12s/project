@@ -115,11 +115,11 @@
         <span>AI Chat</span>
     </button>
 </section>
-<?php 
+<?php
 $current_page_script = basename(parse_url(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '', PHP_URL_PATH));
 $is_merch_page = (!empty($is_merchandise_page) || $current_page_script === 'merch.php' || (isset($active) && $active === 'merch'));
 if ($is_merch_page) { ?>
-<!-- Floating Side Cart Button & Side Cart Drawer (Merch Page Only) -->
+
 <div class="side-cart-backdrop" id="sideCartBackdrop"></div>
 <aside class="side-cart-drawer" id="sideCartDrawer" aria-hidden="true" role="dialog" aria-label="Shopping Cart">
     <div class="side-cart-header">
@@ -130,7 +130,7 @@ if ($is_merch_page) { ?>
         <button type="button" class="side-cart-close" id="sideCartClose" aria-label="Close cart">&times;</button>
     </div>
     <div class="side-cart-body" id="sideCartItems">
-        <!-- Rendered by JS -->
+
     </div>
     <div class="side-cart-footer">
         <div class="side-cart-summary">
@@ -150,9 +150,11 @@ if ($is_merch_page) { ?>
     <span class="side-cart-badge" id="sideCartCount">0</span>
 </button>
 <?php } ?>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
 <script src="<?php echo e(site_url('/assets/js/app.js?v=' . filemtime(__DIR__ . '/../assets/js/app.js'))); ?>"></script>
 <?php if (isset($extra_js)) { echo $extra_js; ?>
 <?php } ?>
 </body>
 </html>
+

@@ -52,7 +52,7 @@ $hide_navbar = true;
 $hide_footer = true;
 require __DIR__ . '/includes/header.php';
 
-// Side artwork. Missing file just falls back to the gradient panel.
+
 $join_art = is_file(__DIR__ . '/assets/images/drdoom.webp') ? site_url('/assets/images/drdoom.webp') : '';
 ?>
 <section class="auth-split auth-split--join" aria-label="Create an account">
@@ -139,3 +139,4 @@ $join_art = is_file(__DIR__ . '/assets/images/drdoom.webp') ? site_url('/assets/
     </aside>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

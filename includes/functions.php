@@ -64,28 +64,7 @@ function db_escape($value)
     return esc($value);
 }
 
-/* ---------------------------------------------------------------------------
- * card()
- *
- * The one card renderer for the whole site, so every grid on every page has
- * the same shape: header badge strip, 16:9 image, bold title, two line
- * description preview, and a full width action.
- *
- * Options, all optional except title and href:
- *   href        where the title and the action both point
- *   image       background image for the 16:9 band
- *   title       card heading
- *   desc        two line preview, clamped by CSS
- *   badge       top strip tag, e.g. a category or a content type
- *   badge_href  makes the badge a link; omit for a plain tag
- *   meta        small optional line under the description
- *   cta         action label; defaults to "Read more"
- *   cta_href    action target; defaults to href
- *   cta_soon    set true for a dead end: renders the "Coming soon" outline
- *               treatment instead of a filled button
- *   cover_class extra class on the image band, e.g. merchandise-cover
- *   class       extra class on the card itself
- * ------------------------------------------------------------------------- */
+
 function card($opts = array())
 {
     $href       = site_url(isset($opts['href']) ? $opts['href'] : '#');
@@ -130,8 +109,8 @@ function card($opts = array())
     if ($desc !== '') {
         echo '<p class="card-desc">' . e($desc) . '</p>';
     } elseif ($meta !== '') {
-        /* Keeps the two line block height reserved when a card has no prose,
-           so a row of cards still lines up. */
+
+
         echo '<p class="card-desc"></p>';
     }
 
@@ -150,8 +129,7 @@ function card($opts = array())
     echo '</article>';
 }
 
-/* Give every reusable content card artwork, even when an uploaded thumbnail
-   is missing or its local file has been removed. */
+
 function card_image_with_fallback($image, $category_hint = '')
 {
     static $fixed_thumbs = false;
@@ -511,7 +489,7 @@ function ensure_srs_tables()
             $o4 = esc($sp[5]);
             db_query("INSERT INTO fandom_polls (category_id, question, option_1, option_2, option_3, option_4, status, created_at) VALUES ($cid, '$q', '$o1', '$o2', '$o3', '$o4', 'open', NOW())");
         }
-        // Seed initial community votes so polls have realistic baseline data
+
         $seed_votes = array(
             array(1, 2, 'seed_u2_p1', 1),
             array(1, 1, 'seed_u1_p1', 2),
@@ -753,12 +731,12 @@ function ensure_upcoming_events()
     }
     $checked = true;
 
-    // Ensure seeded events remain in the upcoming window (>= CURDATE())
+
     db_query("UPDATE events SET event_date = '2026-11-15' WHERE title = 'Midnight Anime Screening' AND event_date < CURDATE()");
     db_query("UPDATE events SET event_date = '2026-11-22' WHERE title = 'Lightstick Night' AND event_date < CURDATE()");
     db_query("UPDATE events SET event_date = '2026-12-14' WHERE title = 'Manga Library Fair' AND event_date < CURDATE()");
 
-    // Ensure additional upcoming fandom events exist so every category has upcoming events
+
     $extra_events = array(
         array(
             'cat_id' => 6,
@@ -814,7 +792,7 @@ function ensure_upcoming_events()
 
 function render_breadcrumbs($crumbs = array())
 {
-    // Removed per user request
+
 }
 
 function render_share_bar($title = '')
@@ -917,25 +895,14 @@ function favorite_slugs($user)
     return array_filter(array_map('trim', explode(',', $user['favorite_categories'])));
 }
 
-/* ---------------------------------------------------------------------------
- * Category pages
- *
- * Every category owns a real file at the site root (anime.php, k-pop.php, ...)
- * and every one of them is a three line wrapper that hands its slug to
- * render_category_page() in includes/category_template.php.
- * ------------------------------------------------------------------------- */
 
-/* Slugs are already URL safe, but keep the guard so a hand typed URL can
-   never turn into something unexpected inside a href. */
 function category_url($slug)
 {
     $slug = preg_replace('/[^a-z0-9\-]/', '', strtolower((string) $slug));
     return $slug === '' ? site_url('/index.php') : site_url('/' . $slug . '.php');
 }
 
-/* Counts for every content type in one pass. The category hero uses these for
-   the stat row, and the Coming Soon section hides itself when a category is
-   already fully stocked. */
+
 function category_counts($category_id)
 {
     $cid = (int) $category_id;
@@ -963,9 +930,7 @@ function category_total($counts)
         + (int) $counts['events'] + (int) $counts['merch'];
 }
 
-/* Long form copy per category. The database description is one short line and
-   is not enough for a hero, so the editorial text lives here where it can be
-   tweaked without touching the schema. */
+
 function category_copy($slug)
 {
     static $copy = array(
@@ -1031,9 +996,7 @@ function category_copy($slug)
     );
 }
 
-/* Placeholder roadmap shown in the Coming Soon section. These are editorial
-   promises, not database rows, so they stay out of the schema and disappear
-   the moment real content lands. */
+
 function category_coming_soon($slug)
 {
     static $roadmap = array(
@@ -1096,8 +1059,7 @@ function category_coming_soon($slug)
     );
 }
 
-/* Local banner art wins over the remote fallback so the club keeps working
-   offline. Mirrors the mapping index.php already uses for its category cards. */
+
 function category_banner_image($slug)
 {
     $local = array(
@@ -1121,12 +1083,7 @@ function category_banner_image($slug)
     return category_visual_image($slug);
 }
 
-/* ---------------------------------------------------------------------------
- * Homepage hero slider
- *
- * Each slide uses its matching image from assets/images/fandoms/. If an image
- * is unavailable, the slide falls back to a gradient instead of a broken URL.
- * ------------------------------------------------------------------------- */
+
 function hero_slide_image($filename)
 {
     $filename = basename((string) $filename);
@@ -1140,9 +1097,7 @@ function hero_slide_image($filename)
     return '';
 }
 
-/* Per-slide gradient shown while no artwork file exists.
-   Without this the carousel renders as a flat --bg-2 box, which is what the
-   "never a broken image" comment above used to promise but never delivered. */
+
 function hero_slide_gradient($n)
 {
     $palettes = array(
@@ -1179,7 +1134,7 @@ function hero_slides()
             'slug' => 'anime',
             'image' => 'anime.jfif',
             'video' => 'spotlight/anime.mp4',
-            
+
             'kicker' => 'Anime',
             'title' => 'Anime Worlds',
             'line' => 'From shonen battles to quiet character stories, explore the series and scenes fans keep coming back to.',
@@ -1241,3 +1196,4 @@ function hero_slides()
         ),
     );
 }
+

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/functions.php';
 
-// Only registered (logged in) users can submit feedback.
+
 if (!is_logged_in()) {
     flash_set('error', 'Please log in to submit feedback.');
     redirect('/login.php?next=' . rawurlencode('/feedback.php'));
@@ -94,3 +94,4 @@ $feedback_art = is_file(__DIR__ . '/assets/images/johnwick.webp') ? site_url('/a
     </aside>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

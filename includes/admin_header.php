@@ -93,3 +93,4 @@ $admin_icons = array(
             <div class="flash flash-<?php echo e($flash['type']); ?>" role="status" data-autodismiss style="width:auto;margin:16px 28px 0"><?php echo e($flash['message']); ?></div>
         <?php } ?>
         <main class="admin-page">
+

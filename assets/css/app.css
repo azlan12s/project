@@ -19,7 +19,6 @@
   --shadow-card: 0 26px 60px rgba(0, 0, 0, 0.55);
   --radius: 18px;
 
-    /* Motion + elevation scale */
     --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
@@ -35,7 +34,6 @@
         radial-gradient(900px 700px at 100% 15%, rgba(190, 14, 34, 0.24), transparent 58%);
 }
 
-/* True white/light mode, Bano Qabil style */
 html[data-theme="light"] {
     --bg: #f5f5f5;
     --bg-2: #ffffff;
@@ -74,7 +72,6 @@ html, body { margin: 0; padding: 0; }
 a { text-decoration: none; transition: color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); }
 ::selection { background: var(--accent); color: #fff; }
 
-/* Custom scrollbar */
 * { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
 ::-webkit-scrollbar { width: 11px; height: 11px; }
 ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
@@ -92,14 +89,11 @@ body {
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* `clip` contains stray horizontal overflow without creating a scroll
-       container, so the sticky header keeps working (unlike `hidden`). */
+
     overflow-x: clip;
     transition: background-color var(--t-base) var(--ease), color var(--t-base) var(--ease);
 }
-/* The ambient gradient lives on its own fixed layer instead of
-   `background-attachment: fixed`, which forced a full-page repaint on
-   every scroll frame. This version is composited once and never repaints. */
+
 body::before {
     content: "";
     position: fixed;
@@ -117,7 +111,6 @@ body::before {
     white-space: nowrap; border: 0;
 }
 
-/* Scroll progress rail */
 .scroll-progress {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -137,7 +130,6 @@ body::before {
     will-change: transform;
 }
 
-/* Back to top */
 .to-top {
     position: fixed;
     right: 22px;
@@ -161,7 +153,6 @@ body::before {
 .to-top.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 .to-top:hover { border-color: var(--accent); color: var(--accent-2); transform: translateY(-3px) scale(1.05); }
 
-/* Toasts */
 .toast-host {
     position: fixed;
     left: 50%;
@@ -193,10 +184,6 @@ body::before {
 .toast-error { border-color: var(--danger); color: var(--danger); }
 .toast-info { border-color: var(--accent); color: var(--accent-2); }
 
-/* Scroll reveal: only armed when JS is available (html.js-motion).
-   Content rises from below and settles with a slight scale release.
-   No will-change here: a page can hold 30+ cards and each composited layer
-   costs real memory. opacity/transform animate on the GPU regardless. */
 .js-motion .reveal {
     opacity: 0;
     transform: translate3d(0, 40px, 0) scale(0.985);
@@ -227,11 +214,7 @@ body::before {
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--line);
 }
-/* Three zone header: brand on the left, the primary menu centred, user
-   actions on the right. The centre zone is a flex child that grows, so the
-   links sit in the middle of the bar instead of drifting next to the logo. */
-/* The nav needs more room than the 1180px body column allows, so the header
-   breaks out to its own wider container instead of crushing the links. */
+
 .header-inner { display: flex; align-items: center; gap: 10px; min-height: 72px; width: min(1560px, calc(100% - 32px)); }
 .brand {
     display: flex;
@@ -269,12 +252,8 @@ body::before {
     flex: 1 1 auto;
     min-width: 0;
 }
-/* Capsule nav item: Clean pill shape.
-   Default (resting): Subtle transparent capsule with muted text.
-   Hover: Transforms to vibrant theme red gradient with white text.
-   Hover out: Smoothly reverts back to original subtle transparent state.
-   Active page: Stays marked with the filled accent pill. */
-.site-nav > a,
+
+.site-nav a:not(.nav-drop-menu a),
 .nav-drop-btn {
     position: relative;
     background: transparent;
@@ -292,30 +271,25 @@ body::before {
     gap: 5px;
     cursor: pointer;
     font-family: inherit;
-    transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+    transition: color var(--t-fast) var(--ease);
 }
-.site-nav > a:hover,
-.site-nav > a:focus-visible,
+.site-nav a:not(.nav-drop-menu a):hover,
+.site-nav a:not(.nav-drop-menu a):focus-visible,
 .nav-drop-btn:hover,
 .nav-drop:focus-within .nav-drop-btn {
-    color: #fff !important;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 4px 14px rgba(71, 10, 17, 0.35);
-    transform: translateY(-1px);
+    color: var(--accent) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none;
 }
-.site-nav > a[aria-current="page"],
+.site-nav a:not(.nav-drop-menu a)[aria-current="page"],
 .nav-drop-btn[aria-current="page"] {
     color: #fff !important;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 6px 18px rgba(71, 10, 17, 0.35);
+    background: #b81425 !important;
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.45);
 }
-.site-nav > a[aria-current="page"]::after { display: none; }
+.site-nav a[aria-current="page"]::after { display: none; }
 
-/* Categories dropdown.
-   Opened by :focus-within rather than :hover alone, so it is reachable by
-   keyboard and closes on its own the moment focus or the pointer leaves.
-   initNav() in app.js mirrors the state onto aria-expanded for screen
-   readers. */
 .nav-drop { position: relative; }
 .nav-caret { width: 13px; height: 13px; transition: transform var(--t-base) var(--ease); }
 .nav-drop:hover .nav-caret, .nav-drop:focus-within .nav-caret { transform: rotate(180deg); }
@@ -351,7 +325,7 @@ body::before {
     padding: 8px;
     border-radius: 11px;
     transition: background-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
-    /* Override the underline bar that every .site-nav a carries. */
+
 }
 .nav-drop-menu a::after { display: none; }
 .nav-drop-menu a::before { display: none; }
@@ -376,7 +350,7 @@ body::before {
     border: 1px solid var(--line);
 }
 .nav-drop-text { min-width: 0; }
-/* The name must never wrap or clip, whatever the label length. */
+
 .nav-drop-text b { display: block; color: var(--text); font-size: 0.9rem; font-weight: 700; white-space: nowrap; }
 .nav-drop-text small {
     display: block;
@@ -391,8 +365,7 @@ body::before {
 }
 
 @media (max-width: 900px) {
-    /* On the collapsed mobile menu the flyout would be clipped by the
-       header, so it becomes a plain stacked list. */
+
     .nav-drop-menu {
         position: static;
         width: 100%;
@@ -422,44 +395,45 @@ body::before {
     text-decoration: none;
     line-height: 1;
     white-space: nowrap;
-    transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+    transition: color var(--t-fast) var(--ease);
 }
 .nav-login-btn:hover,
 .nav-login-btn:focus-visible,
 .header-tools .nav-link:hover,
 .header-tools .nav-link:focus-visible {
-    color: #fff !important;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 4px 14px rgba(71, 10, 17, 0.35);
-    transform: translateY(-1px);
+    color: var(--accent) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none;
 }
 .header-tools .nav-link[aria-current="page"] {
     color: #fff !important;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 6px 18px rgba(71, 10, 17, 0.35);
+    background: #b81425 !important;
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.45);
 }
 
 .nav-cta {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: #b81425;
     color: #fff !important;
     font-weight: 700;
     font-size: 0.82rem;
     padding: 8px 14px;
     border-radius: 999px;
-    box-shadow: 0 6px 18px rgba(71, 10, 17, 0.3);
+    border: none;
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.35);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     line-height: 1;
     white-space: nowrap;
-    transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+    transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
 }
 .nav-cta::after { display: none; }
 .nav-cta:hover {
+    background: #990f1e;
     transform: translateY(-2px);
-    filter: brightness(1.08);
-    box-shadow: 0 10px 24px rgba(71, 10, 17, 0.45);
+    box-shadow: 0 8px 22px rgba(184, 20, 37, 0.5);
 }
 .mobile-only-link { display: none !important; }
 @media (max-width: 1200px) {
@@ -515,7 +489,6 @@ body::before {
 .icon-btn:active { transform: translateY(0); }
 .header-tools { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; }
 
-/* Visually hidden but still announced, for the search field's label. */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -528,7 +501,6 @@ body::before {
     border: 0;
 }
 
-/* Inline search field. Collapses to just the magnifier under 900px. */
 .header-search {
     display: flex;
     align-items: center;
@@ -620,12 +592,10 @@ body::before {
 
 .icon-account { text-decoration: none; }
 
-/* Theme toggle: show the icon for the theme you would switch TO. */
 #themeToggle .icon-moon { display: none; }
 html[data-theme="light"] #themeToggle .icon-sun { display: none; }
 html[data-theme="light"] #themeToggle .icon-moon { display: block; }
 
-/* Theme cross-fade driven by the View Transitions API. */
 ::view-transition-old(root), ::view-transition-new(root) {
     animation-duration: 0.34s;
     animation-timing-function: var(--ease);
@@ -660,14 +630,11 @@ h1 { font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.05; }
 h2 { font-size: clamp(1.4rem, 2.6vw, 2rem); }
 .lede { color: var(--muted); font-size: 1.08rem; max-width: 58ch; line-height: 1.65; }
 
-/* Hero section. Just the band now; the fandom carousel lives further down,
-   between the category grid and Featured & popular. */
 .hero {
     position: relative;
     background: var(--bg-2);
 }
 
-/* Hero band */
 .hero-band {
     position: relative;
     overflow: hidden;
@@ -715,14 +682,10 @@ html[data-theme="light"] .hero-watermark {
     display: block;
     font-family: Syne, sans-serif;
     font-size: 2.1rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #e11d2e;
 }
 .hero-stats span { color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
 
-/* Scroll cue: an absolutely placed overlay on the band, as it was. */
 .hero-scroll-cue {
     position: absolute;
     right: 28px;
@@ -753,13 +716,6 @@ html[data-theme="light"] .hero-watermark {
     .hero-scroll-cue { right: 16px; }
 }
 
-/* ---------------------------------------------------------------------------
-   Fandom carousel
-   Full bleed block between the category grid and Featured & popular. 8 slides,
-   the headline swaps with the artwork. Images are optional: a slide with no
-   file in assets/images/slider/ falls back to its own gradient, so the band is
-   never empty and nothing 404s.
-   --------------------------------------------------------------------------- */
 .fan-slider-section {
     background: linear-gradient(180deg, var(--bg), var(--card-2));
     border-top: 1px solid var(--line);
@@ -776,10 +732,7 @@ html[data-theme="light"] .hero-watermark {
     box-shadow: var(--shadow);
     overflow: hidden;
 }
-/* All slides occupy the same grid cell, so the track's height always fits the
-   tallest slide and the cross-fade happens in place. A flex row would put
-   slides 2..8 side by side, off-screen, since the JS only toggles .is-active
-   and never translates the track. */
+
 .hs-track {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -791,8 +744,7 @@ html[data-theme="light"] .hero-watermark {
     min-height: clamp(320px, 42vw, 460px);
     display: flex;
     align-items: center;
-    /* Inactive slides are taken out of layout visibility and off the tab
-       order, but stay in the same cell. */
+
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.7s var(--ease), visibility 0.7s var(--ease);
@@ -819,10 +771,7 @@ html[data-theme="light"] .hero-watermark {
     background: transparent;
 }
 .hs-slide.is-active .hs-media { transform: scale(1); }
-/* Scrim. A light veil only, so the artwork reads as a picture at rest and the
-   slide is not a black panel. Hover fades the whole thing out and the image is
-   left untouched. The copy keeps its own text-shadow (below) because it has to
-   stay readable over the now unfiltered artwork. */
+
 .hs-scrim {
     position: absolute;
     inset: 0;
@@ -848,9 +797,7 @@ html[data-theme="light"] .hero-watermark {
     padding: 60px 0 74px;
     max-width: 720px;
 }
-/* The scrim is only a light veil and vanishes on hover, so the copy carries its
-   own shadow. Without it the white headline sits straight on the artwork and
-   disappears over a bright frame. */
+
 .hs-kicker {
     display: inline-block;
     color: var(--accent-2);
@@ -900,8 +847,6 @@ html[data-theme="light"] .hero-watermark {
 }
 .hs-actions a:focus-visible { outline: 3px solid #f4f4f5; outline-offset: 3px; }
 
-/* Text of the inactive slides animates in separately from the cross-fade so
-   the copy feels attached to its own artwork. */
 .hs-content > * { opacity: 0; transform: translateY(18px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
 .hs-slide.is-active .hs-content > * { opacity: 1; transform: translateY(0); }
 .hs-slide.is-active .hs-content > *:nth-child(2) { transition-delay: 0.06s; }
@@ -954,7 +899,6 @@ html[data-theme="light"] .hero-watermark {
 .hs-dot:hover { background: rgba(255, 255, 255, 0.6); }
 .hs-dot.active { width: 52px; background: var(--accent-2); }
 
-/* Counter in the corner, purely informational. */
 .hs-count {
     position: absolute;
     right: 22px;
@@ -980,11 +924,6 @@ html[data-theme="light"] .hero-watermark {
     .fan-slider { border-radius: 12px; }
 }
 
-/* ---------------------------------------------------------------------------
-   Category landing pages
-   Shared markup lives in includes/category_template.php, so these rules cover
-   all eight pages at once.
-   --------------------------------------------------------------------------- */
 .cat-hero {
     position: relative;
     isolation: isolate;
@@ -1021,8 +960,6 @@ html[data-theme="light"] .hero-watermark {
 .cat-hero-stats span { color: rgba(255, 255, 255, 0.62); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .cat-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-/* Sticky in-page jump nav. Stops being sticky once it would collide with the
-   header, hence the small negative offset compensation. */
 .cat-jump {
     position: sticky;
     top: 0;
@@ -1058,15 +995,8 @@ html[data-theme="light"] .hero-watermark {
     transform: translateY(-1px);
 }
 
-/* Anchor targets need breathing room under the sticky jump bar. */
 .cat-jump + .section, .cat-hero ~ .cat-jump ~ .section { scroll-margin-top: 76px; }
 
-/* ---------------------------------------------------------------------------
-   Category spotlights
-   Five curated entries per category, each one a headed block holding three
-   sub blocks: movies, gallery and cosplay. Everything is on the category page,
-   so these are static panels rather than cards that navigate somewhere.
-   --------------------------------------------------------------------------- */
 .spot-bio { max-width: 70ch; margin: 0 0 18px; color: var(--muted); }
 
 .spot-grid {
@@ -1100,7 +1030,6 @@ html[data-theme="light"] .hero-watermark {
 }
 .spot-panel code em { font-style: normal; opacity: 0.6; }
 
-/* Movies */
 .spot-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .spot-list li {
     display: flex;
@@ -1113,13 +1042,6 @@ html[data-theme="light"] .hero-watermark {
 .spot-list-title { flex: 1 1 auto; font-weight: 600; line-height: 1.35; }
 .spot-list-meta { flex: 0 0 auto; color: var(--muted); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
 
-/* Gallery carousel. A real clip at
-   assets/videos/spotlight/<slug>/<key>-<n>.mp4 plays behind caption <n>, with
-   the matching file at assets/images/spotlight/<slug>/<key>-<n>.jpg as its
-   poster. Until then the caption carries the slot on a labelled gradient.
-   Both the image and the video are attached only while their slide is the
-   visible one, so a category page with five carousels does not pull twenty
-   clips and twenty posters before the visitor asks. */
 .spot-carousel { position: relative; }
 .sg-viewport {
     position: relative;
@@ -1210,7 +1132,6 @@ html[data-theme="light"] .hero-watermark {
 .sg-dot:hover { background: var(--muted); }
 .sg-dot.active { width: 38px; background: var(--accent-2); }
 
-/* Counter, purely informational. */
 .sg-count {
     margin: 8px 0 0;
     text-align: center;
@@ -1222,7 +1143,6 @@ html[data-theme="light"] .hero-watermark {
 }
 .sg-count b { color: var(--text); }
 
-/* Cosplay */
 .spot-cosplay { display: grid; gap: 8px; }
 .spot-cos-card {
     display: flex;
@@ -1294,7 +1214,6 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 3px rgba(71, 10, 17, 0.22);
 }
 
-/* Industrial level validation styles with red border and custom errors */
 input.is-invalid, select.is-invalid, textarea.is-invalid,
 .password-field.is-invalid input {
     border: 2px solid #ef4444 !important;
@@ -1363,20 +1282,25 @@ input.is-valid, select.is-valid, textarea.is-valid,
 .login-text-button:hover, .login-text-button:focus-visible { color: var(--accent-2); transform: translateY(-1px); }
 .search-bar input, .search-bar select { border: 0; background: transparent; }
 .btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #fff;
+    background: #b81425;
+    color: #fff !important;
     padding: 12px 18px;
     border-radius: 999px;
+    border: none;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-weight: 700;
-    box-shadow: 0 8px 24px rgba(71, 10, 17, 0.3);
-    transition: filter var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.35);
+    transition: background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
 }
-.btn:hover { filter: brightness(1.06); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(71, 10, 17, 0.42); }
+.btn:hover {
+    background: #990f1e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(184, 20, 37, 0.45);
+}
 .btn:active { transform: translateY(0) scale(0.98); }
 .btn-ghost {
     background: transparent;
@@ -1429,34 +1353,29 @@ input.is-valid, select.is-valid, textarea.is-valid,
     gap: 10px;
     padding: 13px 26px;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--accent), #b81425);
-    color: #fff;
+    background: #b81425;
+    color: #fff !important;
     border: 1px solid rgba(255, 255, 255, 0.22);
     font-size: 0.96rem;
     font-weight: 750;
     letter-spacing: 0.01em;
     text-decoration: none;
     white-space: nowrap;
-    box-shadow: 0 10px 26px rgba(240, 24, 45, 0.34);
-    transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+    box-shadow: 0 6px 18px rgba(184, 20, 37, 0.35);
+    transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
 }
 .section-head a.events-map-btn:hover, .events-map-btn:hover {
-    color: #fff;
-    filter: brightness(1.08);
+    background: #990f1e;
+    color: #fff !important;
     transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(240, 24, 45, 0.48);
+    box-shadow: 0 10px 24px rgba(184, 20, 37, 0.45);
 }
 .events-map-btn svg {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
-/* ---------------------------------------------------------------------------
-   Card grid system.
-   Four across on a desktop, stepping down to two then one on smaller screens.
-   The card surface is the theme surface, so a card is solid white in the light
-   theme and the dark surface in the dark theme rather than a gradient wash.
-   --------------------------------------------------------------------------- */
+
 .grid { display: grid; gap: 18px; }
 .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1479,7 +1398,7 @@ input.is-valid, select.is-valid, textarea.is-valid,
     border-color: var(--accent);
     box-shadow: var(--shadow-card);
 }
-/* Sheen sweep on hover */
+
 .card::before {
     content: "";
     position: absolute;
@@ -1492,7 +1411,6 @@ input.is-valid, select.is-valid, textarea.is-valid,
 }
 .card:hover::before { transform: translateX(130%); }
 
-/* Header badge strip: category or type tag sitting above the picture. */
 .card-top {
     display: flex;
     align-items: center;
@@ -1521,7 +1439,6 @@ input.is-valid, select.is-valid, textarea.is-valid,
 }
 a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
 
-/* 16:9 image band. */
 .card a.cover, .cover {
     display: block;
     aspect-ratio: 16 / 9;
@@ -1533,8 +1450,6 @@ a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
 .card:hover a.cover, .card:hover .cover { transform: scale(1.07); filter: saturate(1.15) contrast(1.05); }
 .merchandise-cover { background-image: url("../images/gam1.jfif"); }
 
-/* Text block. flex:1 on the body plus margin-top:auto on the CTA pins the
-   buttons to the bottom edge so a row of cards lines up. */
 .card-body {
     display: flex;
     flex-direction: column;
@@ -1552,7 +1467,6 @@ a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
 .card-title a { color: var(--text); }
 .card-title a:hover { color: var(--accent-2); transform: translateX(2px); }
 
-/* Two line preview, clamped so cards in a row stay the same height. */
 .card-desc {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -1566,7 +1480,6 @@ a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
 }
 .card-meta { margin: 0; color: var(--muted); font-size: 0.78rem; }
 
-/* Full width primary action. */
 .card-cta {
     display: flex;
     align-items: center;
@@ -1576,24 +1489,23 @@ a.card-badge:hover { background: rgba(244, 244, 245, 0.3); }
     margin-top: auto;
     padding: 10px 14px;
     border-radius: 10px;
-    background: var(--accent);
-    color: #fff;
+    background: #b81425;
+    color: #fff !important;
     font-size: 0.86rem;
     font-weight: 700;
     text-decoration: none;
-    transition: background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+    box-shadow: 0 4px 12px rgba(184, 20, 37, 0.3);
+    transition: background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
 }
 .card-cta span { transition: transform var(--t-fast) var(--ease); }
-.card-cta:hover { background: var(--accent-2); filter: brightness(1.05); }
-html:not([data-theme="light"]) .card-cta:not(.is-soon):hover,
-html:not([data-theme="light"]) .card-cta:not(.is-soon):focus-visible {
-    background: #fff;
-    color: #111;
-    filter: none;
+.card-cta:not(.is-soon):hover {
+    background: #990f1e;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(184, 20, 37, 0.45);
 }
 .card-cta:hover span { transform: translateX(3px); }
-/* Coming soon and other inactive states: outline, not a filled button, so a
-   dead end never looks like something to click. */
+
 .card-cta.is-soon {
     background: transparent;
     border: 1px dashed var(--line);
@@ -1603,8 +1515,6 @@ html:not([data-theme="light"]) .card-cta:not(.is-soon):focus-visible {
 .card-cta.is-soon:hover { background: transparent; filter: none; }
 .card-cta.is-soon:hover span { transform: none; }
 
-/* The note form on a bookmark card fills the body so its button still lands on
-   the bottom edge of the card. */
 .bookmark-note { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
 .bookmark-note textarea { width: 100%; resize: vertical; }
 
@@ -1643,7 +1553,7 @@ a.chip:hover { background: rgba(244, 244, 245, 0.26); border-color: var(--accent
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: transform var(--t-base) var(--ease-out), box-shadow var(--t-base) var(--ease-out);
 }
-/* Slow drift gives the hero category tiles a living feel. */
+
 .cat-card > * { transition: transform var(--t-base) var(--ease-out); }
 .cat-card::before { content: ""; position: absolute; inset: 0; z-index: 0; background: rgba(0, 0, 0, 0); transition: background-color var(--t-base) var(--ease); pointer-events: none; }
 .cat-card:hover { transform: translateY(var(--lift)); box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55); }
@@ -1690,12 +1600,6 @@ a.chip:hover { background: rgba(244, 244, 245, 0.26); border-color: var(--accent
 .form-row { margin-bottom: 12px; }
 label { display: block; margin-bottom: 6px; font-weight: 600; }
 
-/* ---------------------------------------------------------------------------
-   Split sign-in page
-   Form on one side, tall fandom artwork on the other. The artwork is a 9:16
-   portrait, so the panel is a vertical crop with object-fit rather than a
-   stretched background.
-   --------------------------------------------------------------------------- */
 .auth-split {
     width: min(1180px, calc(100% - 32px));
     margin: 34px auto 46px;
@@ -1828,10 +1732,9 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: #b81425;
 }
 
-/* Artwork side */
 .auth-art {
     position: relative;
     overflow: hidden;
@@ -1896,7 +1799,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
 }
 .auth-art-caption { margin: 0; color: rgba(255, 255, 255, 0.74); font-size: 0.82rem; line-height: 1.45; }
 
-/* Stack on narrow screens: art becomes a banner above the form. */
 @media (max-width: 900px) {
     .auth-split { grid-template-columns: 1fr; gap: 16px; margin: 22px auto 34px; }
     .auth-art { min-height: 300px; order: -1; }
@@ -1913,12 +1815,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     .auth-art-media, .auth-art:hover .auth-art-media { transform: none; transition: none; }
 }
 
-
-/* ---------------------------------------------------------------------------
-   Join page extras
-   The signup form is longer than sign-in, so it gets a fandom chip picker and
-   a two-column preferences row instead of the plain checkbox list.
-   --------------------------------------------------------------------------- */
 .auth-split--join { margin-top: 26px; }
 .auth-split--join .auth-art { min-height: 560px; }
 
@@ -1936,7 +1832,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     outline: none;
 }
 
-/* Article CTA banner at the bottom of articles.php */
 .article-cta-banner {
     display: flex;
     align-items: center;
@@ -1980,9 +1875,9 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, var(--accent), #b81425);
+    background: #b81425;
     color: #fff;
-    box-shadow: 0 6px 16px rgba(240, 24, 45, 0.48);
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.4);
     transition: transform var(--t-base) var(--ease-spring), box-shadow var(--t-fast) var(--ease);
 }
 .article-back-icon svg {
@@ -1993,11 +1888,11 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
 .section-head a.article-back-btn:focus-visible,
 .article-back-btn:hover,
 .article-back-btn:focus-visible {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, var(--accent) 0%, #b81425 100%);
+    border-color: #b81425;
+    background: #b81425;
     color: #fff !important;
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 16px 36px rgba(240, 24, 45, 0.38);
+    box-shadow: 0 12px 28px rgba(184, 20, 37, 0.4);
 }
 .article-back-btn:hover .article-back-icon,
 .article-back-btn:focus-visible .article-back-icon {
@@ -2007,7 +1902,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
-/* Article submission: clean card surface without background image. */
 .article-submit-backdrop {
     position: relative;
     isolation: isolate;
@@ -2112,7 +2006,7 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     transition: border-color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
 .auth-chip:hover { border-color: rgba(71, 10, 17, 0.55); }
-/* Keep the native checkbox out of sight but still keyboard reachable. */
+
 .auth-chip input {
     position: absolute;
     opacity: 0;
@@ -2153,7 +2047,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     .auth-2col { grid-template-columns: 1fr; gap: 0; }
 }
 
-/* Detail-page media blocks get the same zoom treatment as cards */
 .detail-media, .event-detail-image {
     transition: transform var(--t-base) var(--ease-out), border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease-out);
 }
@@ -2163,7 +2056,6 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
     box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5);
 }
 
-/* Admin / user panel layout */
 .dash { display: grid; grid-template-columns: 260px 1fr; gap: 20px; padding: 28px 0; }
 .side {
     background: linear-gradient(180deg, var(--card), var(--card-2));
@@ -2204,11 +2096,7 @@ table tbody tr, .table tbody tr { transition: background-color var(--t-fast) var
 table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06); }
 
 #map { height: 480px; border-radius: var(--radius); border: 1px solid var(--line); }
-/* ---------------------------------------------------------------------------
-   Site footer
-   Two theme treatments driven by CSS only, so toggling the theme re-themes
-   the artwork without any JavaScript.
-   --------------------------------------------------------------------------- */
+
 .site-footer {
     position: relative;
     isolation: isolate;
@@ -2218,7 +2106,7 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
     background: var(--bg-2);
     overflow: hidden;
 }
-/* Soft orange wash bleeding down from the top edge. */
+
 .footer-glow {
     position: absolute;
     inset: -40% 0 auto 0;
@@ -2231,7 +2119,6 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
 }
 .site-footer > .wrap { position: relative; z-index: 1; }
 
-/* Brand column */
 .footer-grid {
     display: grid;
     grid-template-columns: 1.7fr 1fr 1fr 1fr;
@@ -2342,7 +2229,6 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
 .footer-top::before { content: "\2191"; font-size: 0.9rem; line-height: 1; }
 .footer-top:hover { background: rgba(71, 10, 17, 0.18); border-color: var(--accent); color: var(--text); }
 
-/* Light theme */
 [data-theme="light"] .site-footer { background: var(--bg); }
 [data-theme="light"] .footer-glow {
     background:
@@ -2361,9 +2247,8 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
     .footer-bottom { justify-content: flex-start; }
 }
 .avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
-.badge { background: linear-gradient(135deg, var(--accent-2), var(--accent)); color: #fff; border-radius: 999px; padding: 2px 8px; font-size: 0.75rem; }
+.badge { background: #b81425; color: #fff !important; border-radius: 999px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
 
-/* Admin panel: sidebar-only shell, no public top navbar */
 .admin-body {
     margin: 0;
     color: var(--text);
@@ -2461,7 +2346,6 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
     .toast-host { bottom: 66px; width: calc(100% - 28px); }
 }
 
-/* Home page video carousel */
 .video-carousel {
     position: relative;
     background: linear-gradient(180deg, var(--card), var(--card-2));
@@ -2474,8 +2358,7 @@ table tbody tr:hover, .table tbody tr:hover { background: rgba(71, 10, 17, 0.06)
 .vc-track-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #000; }
 .vc-track { display: flex; transition: transform var(--t-slow) var(--ease-out); will-change: transform; }
 .vc-slide { min-width: 100%; }
-/* Dark, not white: a blocked or slow embed used to leave a white box on the
-   dark theme while the iframe was still loading. */
+
 .vc-media { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; background: #080808 center / cover no-repeat; }
 .vc-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 4px 4px; flex-wrap: wrap; color: var(--muted); }
 .vc-caption h3 { margin: 0; font-size: 1.1rem; }
@@ -2517,12 +2400,8 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
     cursor: pointer;
     padding: 0;
 }
-.vc-dot.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); width: 22px; border-radius: 999px; }
+.vc-dot.active { background: #b81425; width: 22px; border-radius: 999px; }
 
-/* Eight links, the Categories flyout, the search field, two icons and the Join
-   button need roughly 1200px. Below that the row cannot hold them without the
-   pills spilling over each other, so the menu collapses into the panel well
-   before the body grid changes. */
 @media (max-width: 1200px) {
     .nav-toggle { display: inline-flex; }
     .site-nav { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100% - 32px)); padding: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: var(--bg-2); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 12px 12px; box-shadow: var(--shadow); }
@@ -2534,16 +2413,16 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
     .site-nav.open a:nth-child(3n) { animation-delay: 0.07s; }
 }
 @media (max-width: 1120px) {
-    /* Card grid: four across on a desktop, two on a tablet, one on a phone. */
+
     .grid-4, .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .detail-hero, .dash, .footer-grid { grid-template-columns: 1fr; }
     .grid-2 { grid-template-columns: 1fr; }
-    /* Not enough room for a wide field. */
+
     .header-search input { width: 110px; }
     .side { position: static; }
 }
 @media (max-width: 640px) {
-    /* Only the magnifier is left, so it becomes an icon button. */
+
     .header-search { width: 40px; padding: 0; justify-content: center; background: transparent; border-color: transparent; }
     .header-search input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     .header-search button { width: 40px; height: 40px; border: 1px solid var(--line); background: var(--card); }
@@ -2566,8 +2445,7 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
     .card::before { display: none; }
     .card:hover a.cover, .card:hover .cover { transform: none; }
     .detail-media:hover, .event-detail-image:hover { transform: none; }
-    /* Slider: no cross-fade and no ken-burns drift, but the first slide still
-       has to be visible or the homepage looks empty. */
+
     .hs-slide, .hs-content > * { transition: none !important; }
     .hs-slide { opacity: 0; }
     .hs-slide.is-active { opacity: 1; }
@@ -2575,7 +2453,6 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
     ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
-/* Site-aware assistant in the shared burgundy, green, and cream palette. */
 .site-assistant { position: fixed; z-index: 90; right: 24px; bottom: 84px; }
 .assistant-launcher {
     display: inline-flex; align-items: center; gap: 9px; min-height: 48px; padding: 0 17px;
@@ -2597,9 +2474,9 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
 .assistant-ai-avatar {
     width: 38px; height: 38px; flex: 0 0 38px; border-radius: 50%;
     display: grid; place-items: center;
-    background: linear-gradient(135deg, var(--accent), #b81425);
+    background: #b81425;
     color: #fff;
-    box-shadow: 0 0 16px rgba(240, 24, 45, 0.5);
+    box-shadow: 0 0 16px rgba(184, 20, 37, 0.45);
 }
 .assistant-ai-avatar svg { width: 20px; height: 20px; }
 .assistant-status-dot {
@@ -2621,7 +2498,7 @@ html[data-theme="light"] .video-carousel .vc-details-link:hover, html[data-theme
 .assistant-message { max-width: 92%; margin: 0; padding: 11px 13px; border: 1px solid var(--line); border-radius: 15px 15px 15px 4px; background: var(--card); color: var(--text); font-size: 0.86rem; line-height: 1.52; overflow-wrap: anywhere; }
 .assistant-message.is-typing { opacity: 0.75; font-style: italic; }
 .assistant-message p { margin: 0; }
-.assistant-user { align-self: flex-end; border-color: #e11d2e; border-radius: 15px 15px 4px 15px; background: linear-gradient(135deg, var(--accent), #b81425); color: #f4f4f5; }
+.assistant-user { align-self: flex-end; border-color: #b81425; border-radius: 15px 15px 4px 15px; background: #b81425; color: #fff; }
 .assistant-message a { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; padding: 5px 10px; border-radius: 999px; background: rgba(240, 24, 45, 0.16); border: 1px solid rgba(240, 24, 45, 0.45); color: var(--text); font-size: 0.78rem; font-weight: 700; text-decoration: none; }
 .assistant-message a:hover { background: var(--accent); color: #fff; }
 .assistant-message small { display: block; margin-top: 3px; color: var(--muted); font-size: 0.71rem; }
@@ -2649,7 +2526,6 @@ html[data-theme="light"] .assistant-panel { box-shadow: 0 22px 60px rgba(47, 72,
     .assistant-panel { position: fixed; right: 10px; bottom: 128px; width: calc(100vw - 20px); height: min(500px, calc(100dvh - 155px)); }
 }
 
-/* Breadcrumbs, Share Bar & Active Filter Chips (SRS Navigation & Social Features) */
 .breadcrumbs {
     display: flex;
     flex-wrap: wrap;
@@ -2731,7 +2607,6 @@ a.chip.active, .chip.active {
     font-weight: 700;
 }
 
-/* Merch Showcase & Side Cart System (Theme-Matched) */
 .merch-card { display: flex; flex-direction: column; }
 .merch-card-price {
     font-weight: 800;
@@ -2783,32 +2658,21 @@ a.chip.active, .chip.active {
     padding: 10px 10px;
     border-radius: 10px;
     border: none;
-    background: var(--accent);
+    background: #b81425;
     color: #fff !important;
     font-size: 0.86rem;
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
-    box-shadow: none;
-    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+    box-shadow: 0 4px 12px rgba(184, 20, 37, 0.3);
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 .merch-card-footer .merch-add-btn:hover,
-.merch-card-footer .card-cta:hover {
-    background: var(--accent-2);
+.merch-card-footer .card-cta:not(.is-soon):hover {
+    background: #990f1e;
+    color: #fff !important;
     transform: translateY(-2px);
-    filter: brightness(1.05);
-}
-html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:hover,
-html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:focus-visible,
-html:not([data-theme="light"]) .merch-card-footer .card-cta:not(.is-soon):hover,
-html:not([data-theme="light"]) .merch-card-footer .card-cta:not(.is-soon):focus-visible {
-    background: #fff;
-    color: #111 !important;
-    filter: none;
-}
-html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:hover svg,
-html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:focus-visible svg {
-    stroke: #111;
+    box-shadow: 0 6px 16px rgba(184, 20, 37, 0.45);
 }
 .merch-card-footer .card-cta.is-soon {
     flex: 1 1 100%;
@@ -2825,7 +2689,6 @@ html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:focus-visible s
     transform: none;
 }
 
-/* Detail page enhancements */
 .merch-detail-header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .merch-rating-pill { color: #f59e0b; font-size: 0.84rem; font-weight: 700; }
 .merch-price-box {
@@ -2905,31 +2768,21 @@ html:not([data-theme="light"]) .merch-card-footer .merch-add-btn:focus-visible s
     padding: 11px 24px;
     font-size: 0.95rem;
     font-weight: 700;
-    background: var(--accent);
+    background: #b81425;
     color: #fff !important;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: none;
-    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+    box-shadow: 0 4px 14px rgba(184, 20, 37, 0.35);
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 .btn-add-cart-lg:hover {
-    background: var(--accent-2);
+    background: #990f1e;
+    color: #fff !important;
     transform: translateY(-2px);
-    filter: brightness(1.05);
-}
-html:not([data-theme="light"]) .btn-add-cart-lg:hover,
-html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible {
-    background: #fff;
-    color: #111 !important;
-    filter: none;
-}
-html:not([data-theme="light"]) .btn-add-cart-lg:hover svg,
-html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible svg {
-    stroke: #111;
+    box-shadow: 0 6px 18px rgba(184, 20, 37, 0.45);
 }
 
-/* Floating Cart Button & Drawer */
 .floating-side-cart {
     position: fixed;
     z-index: 85;
@@ -2942,7 +2795,7 @@ html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible svg {
     padding: 0 16px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: #b81425;
     color: #fff;
     font: inherit;
     font-weight: 750;
@@ -3130,7 +2983,7 @@ html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible svg {
     padding: 12px;
     font-size: 0.95rem;
     font-weight: 750;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: #b81425;
     color: #fff !important;
     border: none;
     border-radius: 10px;
@@ -3148,7 +3001,6 @@ html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible svg {
     cursor: pointer;
 }
 
-/* Cart Checkout Form inside Drawer */
 .cart-checkout-box {
     padding: 14px;
     background: var(--card);
@@ -3182,7 +3034,6 @@ html:not([data-theme="light"]) .btn-add-cart-lg:focus-visible svg {
 .cart-auth-gate p { margin: 0 0 16px; font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 .cart-auth-btns { display: flex; gap: 8px; justify-content: center; }
 
-/* Order Status Badges */
 .badge-order-pending { background: #f59e0b !important; color: #111 !important; font-weight: 700; }
 .badge-order-successful { background: #10b981 !important; color: #fff !important; font-weight: 700; }
 .badge-order-cancelled { background: #ef4444 !important; color: #fff !important; font-weight: 700; }

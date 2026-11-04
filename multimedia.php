@@ -18,8 +18,8 @@ require __DIR__ . '/includes/header.php';
         <a class="chip" href="<?php echo e(site_url('/multimedia.php?type=audio')); ?>">Audio</a>
         <a class="chip" href="<?php echo e(site_url('/multimedia.php?type=explainer')); ?>">Explainers</a>
     </p>
-    <!-- Additional descriptive text for each category -->
-    
+
+
     <div class="grid grid-4">
         <?php foreach ($items as $item) {
             card(array(
@@ -35,3 +35,4 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

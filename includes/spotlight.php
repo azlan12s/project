@@ -1,25 +1,5 @@
 <?php
-/* ---------------------------------------------------------------------------
- * Category spotlights
- *
- * Every category page opens with five curated spotlights, most famous first.
- * These are SERIES, franchises and groups, never individual characters.
- * The database only holds one or two seeded rows per category, so the well
- * known material is authored here instead of seeded per install.
- *
- * Each spotlight renders as its own headed block containing three sub blocks,
- * all on the category page: most famous movies, upcoming gallery, and most
- * famous cosplay. Nothing links to a separate detail page.
- *
- * Gallery media is a carousel of short clips, one per caption. Drop files
- * named
- *   assets/videos/spotlight/<category-slug>/<key>-<n>.mp4
- * (any mp4/webm) and slot <n> plays behind caption <n>. The matching picture
- *   assets/images/spotlight/<category-slug>/<key>-<n>.jpg
- * (any jpg/jpeg/png/webp/avif) stays as the poster and the fallback, so a
- * missing clip simply shows its still and a missing picture falls back to a
- * labelled gradient. Nothing ever 404s.
- * ------------------------------------------------------------------------- */
+
 
 function spotlight_data()
 {
@@ -30,7 +10,7 @@ function spotlight_data()
 
     $data = array(
 
-        /* ------------------------------------------------------------- anime */
+
         'anime' => array(
             array(
                 'key'  => 'dragon-ball',
@@ -104,7 +84,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ------------------------------------------------------------ movies */
+
         'movies' => array(
             array(
                 'key'  => 'mcu',
@@ -178,7 +158,7 @@ function spotlight_data()
             ),
         ),
 
-        /* --------------------------------------------------------- tv-shows */
+
         'tv-shows' => array(
             array(
                 'key'  => 'stranger-things',
@@ -251,7 +231,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ------------------------------------------------------------- k-pop */
+
         'k-pop' => array(
             array(
                 'key'  => 'bts',
@@ -325,7 +305,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ------------------------------------------------------------ manga */
+
         'manga' => array(
             array(
                 'key'  => 'one-piece',
@@ -399,7 +379,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ----------------------------------------------------------- comics */
+
         'comics' => array(
             array(
                 'key'  => 'amazing-spider-man',
@@ -501,7 +481,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ---------------------------------------------------------- cosplay */
+
         'cosplay' => array(
             array(
                 'key'  => 'naruto',
@@ -575,7 +555,7 @@ function spotlight_data()
             ),
         ),
 
-        /* ------------------------------------------------------------ gaming */
+
         'gaming' => array(
             array(
                 'key'  => 'witcher',
@@ -653,7 +633,7 @@ function spotlight_data()
     return $data;
 }
 
-/* Spotlights for one category, always five, most famous first. */
+
 function spotlight_for($slug)
 {
     $all = spotlight_data();
@@ -661,9 +641,7 @@ function spotlight_for($slug)
     return isset($all[$slug]) ? $all[$slug] : array();
 }
 
-/* Filename stems a spotlight accepts, keyed by category and then by key. The
-   seeded uploads were never renamed, so the matcher looks for a stem that
-   appears anywhere in the filename rather than demanding <key>-<n>. */
+
 function spotlight_media_aliases()
 {
     return array(
@@ -728,14 +706,13 @@ function spotlight_media_aliases()
     );
 }
 
-/* Each category strictly uses its own folder in assets/images/spotlight/<category-slug>. */
+
 function spotlight_media_category($category_slug, $key)
 {
     return (string) $category_slug;
 }
 
-/* Shared file walk: match the spotlight alias, order naturally by name (or alias priority) and
-   return public URLs rooted at site_url(). */
+
 function spotlight_media_files($category_slug, $key, $root, $braces)
 {
     $category_slug = (string) $category_slug;
@@ -787,16 +764,13 @@ function spotlight_media_files($category_slug, $key, $root, $braces)
     }, $matches);
 }
 
-/* Return the supplied pictures for a spotlight. Existing uploads use a numbered
-   prefix (for example 1naruto.jpg), so keep the filename convention flexible.
-   They act as the video poster and the fallback when no clip is present. */
+
 function spotlight_gallery_images($category_slug, $key)
 {
     return spotlight_media_files($category_slug, $key, 'assets/images', '.{jpg,jpeg,png,webp,avif}');
 }
 
-/* Return the supplied clips for a spotlight, in the same order as the images,
-   so clip <n> sits behind caption <n>. */
+
 function spotlight_gallery_videos($category_slug, $key)
 {
     return spotlight_media_files($category_slug, $key, 'assets/videos', '.{mp4,webm,m4v,ogv}');
@@ -813,3 +787,4 @@ function spotlight_gallery_video($category_slug, $key, $n)
     $videos = spotlight_gallery_videos($category_slug, $key);
     return isset($videos[(int) $n - 1]) ? $videos[(int) $n - 1] : '';
 }
+

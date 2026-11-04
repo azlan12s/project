@@ -21,7 +21,7 @@ $page_title = isset($page_title) ? $page_title : 'Fan Hub Plus';
 $nav_cats = categories();
 $flash = flash_get();
 
-/* Highlight the nav item for the current page. */
+
 $current_page = basename(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'index.php');
 $nav_links = array(
     'index.php' => array(site_url('/index.php'), 'Home'),
@@ -35,9 +35,7 @@ $nav_links = array(
     'events-map.php' => array(site_url('/events-map.php'), 'Map'),
 );
 
-/* Each category is a real page at the site root (anime.php, k-pop.php, ...).
-   Building the list from the database means a new category shows up in the
-   menu as soon as its row exists, with no edit here. */
+
 $nav_category_slugs = array();
 foreach ($nav_cats as $nav_cat_row) {
     $nav_category_slugs[] = $nav_cat_row['slug'] . '.php';
@@ -159,3 +157,4 @@ $on_category_page = in_array($current_page, $nav_category_slugs, true);
     <div class="flash flash-<?php echo e($flash['type']); ?>" role="status" data-autodismiss><?php echo e($flash['message']); ?></div>
 <?php } ?>
 <main id="main">
+

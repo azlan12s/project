@@ -1,31 +1,5 @@
 <?php
-/**
- * Shared renderer for the eight category landing pages.
- *
- * Every category owns a real file at the site root (anime.php, k-pop.php, ...)
- * and each of those is only a wrapper that calls render_category_page():
- *
- *     require_once __DIR__ . '/includes/category_template.php';
- *     render_category_page('anime');
- *
- * Keeping the markup in one place means a fix to the category layout lands on
- * all eight pages at once, and there is exactly one place to look for a bug.
- *
- * Page structure, five curated spotlights first, then the seven scrollable
- * sections plus the roadmap. Everything lives on this one page, there is no
- * separate detail view:
- *   1. hero        category banner, description, live counts
- *   2. spotlight   five most famous entries for this category, each with
- *                  headed Most famous movies, Upcoming gallery and
- *                  Most famous cosplay sub blocks
- *   3. featured    flagged titles for this category
- *   4. titles      the full published catalogue for this category
- *   5. people      character profiles
- *   6. events      events and dates
- *   7. merch       merchandise
- *   8. other       jump links to the remaining seven categories
- *   9. soon        the editorial roadmap for this category
- */
+
 
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/spotlight.php';
@@ -116,7 +90,7 @@ function render_category_page($slug)
     require __DIR__ . '/footer.php';
 }
 
-/** Hero banner with live counts and the two hero actions. */
+
 function render_category_hero($cat, $copy, $counts)
 {
     ?>
@@ -141,7 +115,7 @@ function render_category_hero($cat, $copy, $counts)
 <?php
 }
 
-/** Sticky jump menu linking to every section on the page. */
+
 function render_category_jump_nav($cat, $copy)
 {
     ?>
@@ -160,10 +134,7 @@ function render_category_jump_nav($cat, $copy)
 <?php
 }
 
-/**
- * Spotlight block: intro section plus one self-contained block per curated
- * entry (headed movies, gallery carousel and cosplay sub blocks).
- */
+
 function render_category_spotlight($cat)
 {
     $spotlights = spotlight_for($cat['slug']);
@@ -266,10 +237,7 @@ function render_category_spotlight($cat)
 <?php
 }
 
-/**
- * Always rendered, even with no flagged rows, so the jump-nav link to
- * #cat-featured never lands on a missing target.
- */
+
 function render_category_featured($cat, $copy, $featured)
 {
     ?>
@@ -300,7 +268,7 @@ function render_category_featured($cat, $copy, $featured)
 <?php
 }
 
-/** Full published catalogue for the category. */
+
 function render_category_titles($cat, $copy, $titles)
 {
     ?>
@@ -331,7 +299,7 @@ function render_category_titles($cat, $copy, $titles)
 <?php
 }
 
-/** Character profiles for the category. */
+
 function render_category_people($cat, $copy, $people)
 {
     ?>
@@ -361,7 +329,7 @@ function render_category_people($cat, $copy, $people)
 <?php
 }
 
-/** Events and dates for the category. */
+
 function render_category_events($cat, $copy, $events)
 {
     ?>
@@ -392,7 +360,7 @@ function render_category_events($cat, $copy, $events)
 <?php
 }
 
-/** Merchandise for the category. */
+
 function render_category_merch($cat, $copy, $merch)
 {
     ?>
@@ -422,7 +390,7 @@ function render_category_merch($cat, $copy, $merch)
 <?php
 }
 
-/** Jump links to the remaining categories. */
+
 function render_category_others($cat, $others)
 {
     $cid = (int) $cat['id'];
@@ -447,7 +415,7 @@ function render_category_others($cat, $others)
 <?php
 }
 
-/** Editorial roadmap for the category. */
+
 function render_category_soon($cat, $roadmap)
 {
     $spotlights = spotlight_for($cat['slug']);
@@ -482,3 +450,4 @@ function render_category_soon($cat, $roadmap)
     </section>
     <?php
 }
+

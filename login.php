@@ -35,7 +35,7 @@ $hide_navbar = true;
 $hide_footer = true;
 require __DIR__ . '/includes/header.php';
 
-// Side artwork. Missing file just falls back to the gradient panel.
+
 $login_art = is_file(__DIR__ . '/assets/images/gojo.jpg') ? site_url('/assets/images/gojo.jpg') : '';
 ?>
 <section class="auth-split" aria-label="Sign in">
@@ -99,3 +99,4 @@ $login_art = is_file(__DIR__ . '/assets/images/gojo.jpg') ? site_url('/assets/im
     </aside>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+

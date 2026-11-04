@@ -18,12 +18,12 @@ function is_nonsense_search_query($str)
     if ($clean === '') {
         return false;
     }
-    // Single character searches (like "a", "b", "x") or pure punctuation
+
     $alnum = preg_replace('/[^a-z0-9]/', '', $clean);
     if ($alnum === '' || strlen($alnum) < 2) {
         return true;
     }
-    // Classic keyboard sequences / test gibberish like "abcd", "asdf", "qwerty", "zxcv", "1234"
+
     $gibberish_patterns = array(
         'abcd', 'bcde', 'cdef', 'asdf', 'sdfg', 'qwerty', 'werty', 'zxcv', 'xcvb',
         'qazwsx', '1234', '12345', '0000', '9999', 'xxxx', 'zzzz', 'aaaa', 'bbbb', 'cccc', 'dddd'
@@ -33,11 +33,11 @@ function is_nonsense_search_query($str)
             return true;
         }
     }
-    // Repeated same character 3+ times in a row (e.g. "aaab", "ffff")
+
     if (preg_match('/(.)\1\1/', $alnum)) {
         return true;
     }
-    // Words of 4+ letters with zero vowels (excluding known acronyms like "kpop", "jjk", "bts", "mha", "aot", "svt", "skz", "txt")
+
     $allowed_acronyms = array('kpop', 'jjk', 'bts', 'mha', 'aot', 'svt', 'skz', 'txt', 'ost', 'ova', 'rpg', 'fps', 'dc');
     if (strlen($alnum) >= 4 && !in_array($alnum, $allowed_acronyms, true) && !preg_match('/[aeiouy]/', $alnum)) {
         return true;
@@ -91,7 +91,7 @@ $total = (int) $total_row['c'];
 $pages = max(1, (int) ceil($total / $per));
 $items = db_all("SELECT contents.*, categories.name AS category_name, categories.slug AS category_slug FROM contents JOIN categories ON categories.id = contents.category_id WHERE $where ORDER BY $order LIMIT $per OFFSET $offset");
 
-// Cross-module search on page 1 when a valid search query is entered (Characters, Events, Merch)
+
 $extra_cards = array();
 if ($q !== '' && !$is_invalid_q && $page === 1 && $genre === '' && $year === '' && $type === '') {
     $qs_low = esc(strtolower(trim($q)));
@@ -197,9 +197,7 @@ require __DIR__ . '/includes/header.php';
             <option value="az" <?php echo $sort === 'az' ? 'selected' : ''; ?>>Title (A–Z)</option>
         </select>
     </form>
-    <script>
-        // Debounced live search so full words (e.g. "abcd") are typed before submitting
-        const form = document.getElementById('exploreForm');
+    <script>const form = document.getElementById('exploreForm');
         const searchInput = document.getElementById('searchInput');
         const selects = form.querySelectorAll('select');
         let searchTimer = null;
@@ -215,7 +213,7 @@ require __DIR__ . '/includes/header.php';
             });
         }
         selects.forEach(s => s.addEventListener('change', () => { form.submit(); }));
-    </script>
+</script>
 
 
     <div class="grid grid-4">
@@ -254,3 +252,4 @@ require __DIR__ . '/includes/header.php';
     </nav>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
+
